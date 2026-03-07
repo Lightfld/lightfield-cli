@@ -10,7 +10,7 @@ import (
 	"os"
 	"slices"
 
-	"github.com/stainless-sdks/lightfield-cli/pkg/cmd"
+	"github.com/Lightfld/lightfield-cli/pkg/cmd"
 	"github.com/stainless-sdks/lightfield-go"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"

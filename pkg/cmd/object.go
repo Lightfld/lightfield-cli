@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/apiquery"
-	"github.com/stainless-sdks/lightfield-cli/internal/requestflag"
+	"github.com/Lightfld/lightfield-cli/internal/apiquery"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 	"github.com/stainless-sdks/lightfield-go"
 	"github.com/stainless-sdks/lightfield-go/option"
 	"github.com/tidwall/gjson"

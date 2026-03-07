@@ -12,8 +12,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/autocomplete"
-	"github.com/stainless-sdks/lightfield-cli/internal/requestflag"
+	"github.com/Lightfld/lightfield-cli/internal/autocomplete"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 	docs "github.com/urfave/cli-docs/v3"
 	"github.com/urfave/cli/v3"
 )
