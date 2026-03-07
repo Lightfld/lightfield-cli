@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/lightfield-cli
+module github.com/Lightfld/lightfield-cli
 
 go 1.25
 

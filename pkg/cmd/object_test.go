@@ -5,7 +5,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/mocktest"
+	"github.com/Lightfld/lightfield-cli/internal/mocktest"
 )
 
 func TestObjectCreate(t *testing.T) {
