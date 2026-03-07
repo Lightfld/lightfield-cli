@@ -71,7 +71,6 @@ var objectUpdate = cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Required: true,
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
