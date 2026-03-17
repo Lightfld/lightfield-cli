@@ -5,8 +5,8 @@ package cmd
 import (
 	"testing"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/mocktest"
-	"github.com/stainless-sdks/lightfield-cli/internal/requestflag"
+	"github.com/Lightfld/lightfield-cli/internal/mocktest"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestContactCreate(t *testing.T) {
@@ -14,8 +14,8 @@ func TestContactCreate(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t, "contact", "create",
 			"--api-key", "string",
-			"--fields", "{system_email: [string], system_name: {firstName: firstName, lastName: lastName}, system_profilePhotoUrl: system_profilePhotoUrl}",
-			"--relationships", "{system_account: string}",
+			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
+			"--relationships", "{$accounts: string}",
 		)
 	})
 
@@ -27,10 +27,10 @@ func TestContactCreate(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t, "contact", "create",
 			"--api-key", "string",
-			"--fields.system-email", "[string]",
-			"--fields.system-name", "{firstName: firstName, lastName: lastName}",
-			"--fields.system-profile-photo-url", "system_profilePhotoUrl",
-			"--relationships.system-account", "string",
+			"--fields.email", "[string]",
+			"--fields.name", "{firstName: firstName, lastName: lastName}",
+			"--fields.profile-photo-url", "$profilePhotoUrl",
+			"--relationships.accounts", "string",
 		)
 	})
 
@@ -38,14 +38,14 @@ func TestContactCreate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  system_email:\n" +
+			"  $email:\n" +
 			"    - string\n" +
-			"  system_name:\n" +
+			"  $name:\n" +
 			"    firstName: firstName\n" +
 			"    lastName: lastName\n" +
-			"  system_profilePhotoUrl: system_profilePhotoUrl\n" +
+			"  $profilePhotoUrl: $profilePhotoUrl\n" +
 			"relationships:\n" +
-			"  system_account: string\n")
+			"  $accounts: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData, "contact", "create",
 			"--api-key", "string",
@@ -69,8 +69,8 @@ func TestContactUpdate(t *testing.T) {
 			t, "contact", "update",
 			"--api-key", "string",
 			"--id", "id",
-			"--fields", "{system_email: [string], system_name: {firstName: firstName, lastName: lastName}, system_profilePhotoUrl: system_profilePhotoUrl}",
-			"--relationships", "{system_account: {add: string, remove: string, replace: string}}",
+			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
+			"--relationships", "{$accounts: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -83,10 +83,10 @@ func TestContactUpdate(t *testing.T) {
 			t, "contact", "update",
 			"--api-key", "string",
 			"--id", "id",
-			"--fields.system-email", "[string]",
-			"--fields.system-name", "{firstName: firstName, lastName: lastName}",
-			"--fields.system-profile-photo-url", "system_profilePhotoUrl",
-			"--relationships.system-account", "{add: string, remove: string, replace: string}",
+			"--fields.email", "[string]",
+			"--fields.name", "{firstName: firstName, lastName: lastName}",
+			"--fields.profile-photo-url", "$profilePhotoUrl",
+			"--relationships.accounts", "{add: string, remove: string, replace: string}",
 		)
 	})
 
@@ -94,14 +94,14 @@ func TestContactUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  system_email:\n" +
+			"  $email:\n" +
 			"    - string\n" +
-			"  system_name:\n" +
+			"  $name:\n" +
 			"    firstName: firstName\n" +
 			"    lastName: lastName\n" +
-			"  system_profilePhotoUrl: system_profilePhotoUrl\n" +
+			"  $profilePhotoUrl: $profilePhotoUrl\n" +
 			"relationships:\n" +
-			"  system_account:\n" +
+			"  $accounts:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n")
@@ -120,6 +120,15 @@ func TestContactList(t *testing.T) {
 			"--api-key", "string",
 			"--limit", "1",
 			"--offset", "0",
+		)
+	})
+}
+
+func TestContactDefinitions(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t, "contact", "definitions",
+			"--api-key", "string",
 		)
 	})
 }

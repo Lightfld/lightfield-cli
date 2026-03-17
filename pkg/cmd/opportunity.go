@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/apiquery"
-	"github.com/stainless-sdks/lightfield-cli/internal/requestflag"
-	"github.com/stainless-sdks/lightfield-go"
-	"github.com/stainless-sdks/lightfield-go/option"
+	"github.com/Lightfld/lightfield-cli/internal/apiquery"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
+	"github.com/Lightfld/lightfield-go"
+	"github.com/Lightfld/lightfield-go/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )
@@ -36,34 +36,34 @@ var opportunityCreate = requestflag.WithInnerFlags(cli.Command{
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
 		&requestflag.InnerFlag[string]{
-			Name:       "fields.system-name",
-			InnerField: "system_name",
+			Name:       "fields.name",
+			InnerField: "$name",
 		},
 		&requestflag.InnerFlag[string]{
-			Name:       "fields.system-stage",
-			InnerField: "system_stage",
+			Name:       "fields.stage",
+			InnerField: "$stage",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[any]{
-			Name:       "relationships.system-account",
-			InnerField: "system_account",
+			Name:       "relationships.account",
+			InnerField: "$account",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "relationships.system-champion",
-			InnerField: "system_champion",
+			Name:       "relationships.champion",
+			InnerField: "$champion",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "relationships.system-created-by",
-			InnerField: "system_createdBy",
+			Name:       "relationships.created-by",
+			InnerField: "$createdBy",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "relationships.system-evaluator",
-			InnerField: "system_evaluator",
+			Name:       "relationships.evaluator",
+			InnerField: "$evaluator",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "relationships.system-owner",
-			InnerField: "system_owner",
+			Name:       "relationships.owner",
+			InnerField: "$owner",
 		},
 	},
 })
@@ -105,34 +105,26 @@ var opportunityUpdate = requestflag.WithInnerFlags(cli.Command{
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-name",
-			InnerField: "system_name",
+			Name:       "fields.name",
+			InnerField: "$name",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-stage",
-			InnerField: "system_stage",
+			Name:       "fields.stage",
+			InnerField: "$stage",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.system-account",
-			InnerField: "system_account",
+			Name:       "relationships.champion",
+			InnerField: "$champion",
 		},
 		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.system-champion",
-			InnerField: "system_champion",
+			Name:       "relationships.evaluator",
+			InnerField: "$evaluator",
 		},
 		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.system-created-by",
-			InnerField: "system_createdBy",
-		},
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.system-evaluator",
-			InnerField: "system_evaluator",
-		},
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.system-owner",
-			InnerField: "system_owner",
+			Name:       "relationships.owner",
+			InnerField: "$owner",
 		},
 	},
 })
@@ -155,15 +147,24 @@ var opportunityList = cli.Command{
 	HideHelpCommand: true,
 }
 
+var opportunityDefinitions = cli.Command{
+	Name:            "definitions",
+	Usage:           "Perform definitions operation",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleOpportunityDefinitions,
+	HideHelpCommand: true,
+}
+
 func handleOpportunityCreate(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.OpportunityNewParams{}
+	params := githubcomlightfldlightfieldgo.OpportunityNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -190,7 +191,7 @@ func handleOpportunityCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -225,7 +226,7 @@ func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -235,7 +236,7 @@ func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.OpportunityUpdateParams{}
+	params := githubcomlightfldlightfieldgo.OpportunityUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -267,14 +268,14 @@ func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.OpportunityListParams{}
+	params := githubcomlightfldlightfieldgo.OpportunityListParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -298,4 +299,36 @@ func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
 	return ShowJSON(os.Stdout, "opportunity list", obj, format, transform)
+}
+
+func handleOpportunityDefinitions(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Opportunity.Definitions(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(os.Stdout, "opportunity definitions", obj, format, transform)
 }

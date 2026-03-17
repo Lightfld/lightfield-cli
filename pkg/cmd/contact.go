@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/apiquery"
-	"github.com/stainless-sdks/lightfield-cli/internal/requestflag"
-	"github.com/stainless-sdks/lightfield-go"
-	"github.com/stainless-sdks/lightfield-go/option"
+	"github.com/Lightfld/lightfield-cli/internal/apiquery"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
+	"github.com/Lightfld/lightfield-go"
+	"github.com/Lightfld/lightfield-go/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )
@@ -35,22 +35,22 @@ var contactCreate = requestflag.WithInnerFlags(cli.Command{
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-email",
-			InnerField: "system_email",
+			Name:       "fields.email",
+			InnerField: "$email",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-name",
-			InnerField: "system_name",
+			Name:       "fields.name",
+			InnerField: "$name",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-profile-photo-url",
-			InnerField: "system_profilePhotoUrl",
+			Name:       "fields.profile-photo-url",
+			InnerField: "$profilePhotoUrl",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[any]{
-			Name:       "relationships.system-account",
-			InnerField: "system_account",
+			Name:       "relationships.accounts",
+			InnerField: "$accounts",
 		},
 	},
 })
@@ -92,22 +92,22 @@ var contactUpdate = requestflag.WithInnerFlags(cli.Command{
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-email",
-			InnerField: "system_email",
+			Name:       "fields.email",
+			InnerField: "$email",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-name",
-			InnerField: "system_name",
+			Name:       "fields.name",
+			InnerField: "$name",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-profile-photo-url",
-			InnerField: "system_profilePhotoUrl",
+			Name:       "fields.profile-photo-url",
+			InnerField: "$profilePhotoUrl",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.system-account",
-			InnerField: "system_account",
+			Name:       "relationships.accounts",
+			InnerField: "$accounts",
 		},
 	},
 })
@@ -130,15 +130,24 @@ var contactList = cli.Command{
 	HideHelpCommand: true,
 }
 
+var contactDefinitions = cli.Command{
+	Name:            "definitions",
+	Usage:           "Perform definitions operation",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleContactDefinitions,
+	HideHelpCommand: true,
+}
+
 func handleContactCreate(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.ContactNewParams{}
+	params := githubcomlightfldlightfieldgo.ContactNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -165,7 +174,7 @@ func handleContactCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleContactRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -200,7 +209,7 @@ func handleContactRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -210,7 +219,7 @@ func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.ContactUpdateParams{}
+	params := githubcomlightfldlightfieldgo.ContactUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -242,14 +251,14 @@ func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleContactList(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.ContactListParams{}
+	params := githubcomlightfldlightfieldgo.ContactListParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -273,4 +282,36 @@ func handleContactList(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
 	return ShowJSON(os.Stdout, "contact list", obj, format, transform)
+}
+
+func handleContactDefinitions(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Contact.Definitions(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(os.Stdout, "contact definitions", obj, format, transform)
 }
