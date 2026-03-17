@@ -1,5 +1,5 @@
-github.com/Lightfld/lightfield-go v0.1.0 h1:HOBTdfAaafhTSjv+BM+EoChLBYFQ9UsT/oX18trCobo=
-github.com/Lightfld/lightfield-go v0.1.0/go.mod h1:TMTVlKQqjsuDIiw898mRHc7U5lcwhrflBDLmPm+/WH0=
+github.com/Lightfld/lightfield-go v0.2.0 h1:u3jWUSU36ZKWMsoiBg+xayf7sOW6N1WbjQ8mAYdQU/o=
+github.com/Lightfld/lightfield-go v0.2.0/go.mod h1:TMTVlKQqjsuDIiw898mRHc7U5lcwhrflBDLmPm+/WH0=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod h1:uYgXzlJ7ZpABp8OJ+exZzJJhRNQ2ASbcXHWsFqH8hp8=
 github.com/aymanbagabas/go-udiff v0.2.0 h1:TK0fH4MteXUDspT88n8CKzvK0X9O2xu9yQjWpi6yML8=
