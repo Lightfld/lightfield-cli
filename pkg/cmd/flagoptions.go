@@ -14,11 +14,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/apiform"
-	"github.com/stainless-sdks/lightfield-cli/internal/apiquery"
-	"github.com/stainless-sdks/lightfield-cli/internal/debugmiddleware"
-	"github.com/stainless-sdks/lightfield-cli/internal/requestflag"
-	"github.com/stainless-sdks/lightfield-go/option"
+	"github.com/Lightfld/lightfield-cli/internal/apiform"
+	"github.com/Lightfld/lightfield-cli/internal/apiquery"
+	"github.com/Lightfld/lightfield-cli/internal/debugmiddleware"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
+	"github.com/Lightfld/lightfield-go/option"
 
 	"github.com/goccy/go-yaml"
 	"github.com/urfave/cli/v3"

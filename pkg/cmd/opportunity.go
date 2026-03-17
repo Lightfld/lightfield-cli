@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/apiquery"
-	"github.com/stainless-sdks/lightfield-cli/internal/requestflag"
-	"github.com/stainless-sdks/lightfield-go"
-	"github.com/stainless-sdks/lightfield-go/option"
+	"github.com/Lightfld/lightfield-cli/internal/apiquery"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
+	"github.com/Lightfld/lightfield-go"
+	"github.com/Lightfld/lightfield-go/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )
@@ -156,14 +156,14 @@ var opportunityList = cli.Command{
 }
 
 func handleOpportunityCreate(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.OpportunityNewParams{}
+	params := githubcomlightfldlightfieldgo.OpportunityNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -190,7 +190,7 @@ func handleOpportunityCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -225,7 +225,7 @@ func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -235,7 +235,7 @@ func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.OpportunityUpdateParams{}
+	params := githubcomlightfldlightfieldgo.OpportunityUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -267,14 +267,14 @@ func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.OpportunityListParams{}
+	params := githubcomlightfldlightfieldgo.OpportunityListParams{}
 
 	options, err := flagOptions(
 		cmd,
