@@ -14,8 +14,8 @@ func TestAccountCreate(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t, "account", "create",
 			"--api-key", "string",
-			"--fields", "{system_name: system_name, system_facebook: system_facebook, system_headcount: system_headcount, system_industry: [string], system_instagram: system_instagram, system_lastFundingType: system_lastFundingType, system_linkedIn: system_linkedIn, system_primaryAddress: {foo: string}, system_twitter: system_twitter, system_website: [string]}",
-			"--relationships", "{system_contact: string, system_owner: string}",
+			"--fields", "{$name: $name, $facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $primaryAddress: {foo: string}, $twitter: $twitter, $website: [string]}",
+			"--relationships", "{$contacts: string, $owner: string}",
 		)
 	})
 
@@ -27,18 +27,18 @@ func TestAccountCreate(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t, "account", "create",
 			"--api-key", "string",
-			"--fields.system-name", "system_name",
-			"--fields.system-facebook", "system_facebook",
-			"--fields.system-headcount", "system_headcount",
-			"--fields.system-industry", "[string]",
-			"--fields.system-instagram", "system_instagram",
-			"--fields.system-last-funding-type", "system_lastFundingType",
-			"--fields.system-linked-in", "system_linkedIn",
-			"--fields.system-primary-address", "{foo: string}",
-			"--fields.system-twitter", "system_twitter",
-			"--fields.system-website", "[string]",
-			"--relationships.system-contact", "string",
-			"--relationships.system-owner", "string",
+			"--fields.name", "$name",
+			"--fields.facebook", "$facebook",
+			"--fields.headcount", "$headcount",
+			"--fields.industry", "[string]",
+			"--fields.instagram", "$instagram",
+			"--fields.last-funding-type", "$lastFundingType",
+			"--fields.linked-in", "$linkedIn",
+			"--fields.primary-address", "{foo: string}",
+			"--fields.twitter", "$twitter",
+			"--fields.website", "[string]",
+			"--relationships.contacts", "string",
+			"--relationships.owner", "string",
 		)
 	})
 
@@ -46,22 +46,22 @@ func TestAccountCreate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  system_name: system_name\n" +
-			"  system_facebook: system_facebook\n" +
-			"  system_headcount: system_headcount\n" +
-			"  system_industry:\n" +
+			"  $name: $name\n" +
+			"  $facebook: $facebook\n" +
+			"  $headcount: $headcount\n" +
+			"  $industry:\n" +
 			"    - string\n" +
-			"  system_instagram: system_instagram\n" +
-			"  system_lastFundingType: system_lastFundingType\n" +
-			"  system_linkedIn: system_linkedIn\n" +
-			"  system_primaryAddress:\n" +
+			"  $instagram: $instagram\n" +
+			"  $lastFundingType: $lastFundingType\n" +
+			"  $linkedIn: $linkedIn\n" +
+			"  $primaryAddress:\n" +
 			"    foo: string\n" +
-			"  system_twitter: system_twitter\n" +
-			"  system_website:\n" +
+			"  $twitter: $twitter\n" +
+			"  $website:\n" +
 			"    - string\n" +
 			"relationships:\n" +
-			"  system_contact: string\n" +
-			"  system_owner: string\n")
+			"  $contacts: string\n" +
+			"  $owner: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData, "account", "create",
 			"--api-key", "string",
@@ -85,8 +85,8 @@ func TestAccountUpdate(t *testing.T) {
 			t, "account", "update",
 			"--api-key", "string",
 			"--id", "id",
-			"--fields", "{system_facebook: system_facebook, system_headcount: system_headcount, system_industry: [string], system_instagram: system_instagram, system_lastFundingType: system_lastFundingType, system_linkedIn: system_linkedIn, system_name: system_name, system_primaryAddress: {foo: string}, system_twitter: system_twitter, system_website: [string]}",
-			"--relationships", "{system_contact: {add: string, remove: string, replace: string}, system_owner: {add: string, remove: string, replace: string}}",
+			"--fields", "{$facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $name: $name, $primaryAddress: {foo: string}, $twitter: $twitter, $website: [string]}",
+			"--relationships", "{$contacts: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -99,18 +99,18 @@ func TestAccountUpdate(t *testing.T) {
 			t, "account", "update",
 			"--api-key", "string",
 			"--id", "id",
-			"--fields.system-facebook", "system_facebook",
-			"--fields.system-headcount", "system_headcount",
-			"--fields.system-industry", "[string]",
-			"--fields.system-instagram", "system_instagram",
-			"--fields.system-last-funding-type", "system_lastFundingType",
-			"--fields.system-linked-in", "system_linkedIn",
-			"--fields.system-name", "system_name",
-			"--fields.system-primary-address", "{foo: string}",
-			"--fields.system-twitter", "system_twitter",
-			"--fields.system-website", "[string]",
-			"--relationships.system-contact", "{add: string, remove: string, replace: string}",
-			"--relationships.system-owner", "{add: string, remove: string, replace: string}",
+			"--fields.facebook", "$facebook",
+			"--fields.headcount", "$headcount",
+			"--fields.industry", "[string]",
+			"--fields.instagram", "$instagram",
+			"--fields.last-funding-type", "$lastFundingType",
+			"--fields.linked-in", "$linkedIn",
+			"--fields.name", "$name",
+			"--fields.primary-address", "{foo: string}",
+			"--fields.twitter", "$twitter",
+			"--fields.website", "[string]",
+			"--relationships.contacts", "{add: string, remove: string, replace: string}",
+			"--relationships.owner", "{add: string, remove: string, replace: string}",
 		)
 	})
 
@@ -118,25 +118,25 @@ func TestAccountUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  system_facebook: system_facebook\n" +
-			"  system_headcount: system_headcount\n" +
-			"  system_industry:\n" +
+			"  $facebook: $facebook\n" +
+			"  $headcount: $headcount\n" +
+			"  $industry:\n" +
 			"    - string\n" +
-			"  system_instagram: system_instagram\n" +
-			"  system_lastFundingType: system_lastFundingType\n" +
-			"  system_linkedIn: system_linkedIn\n" +
-			"  system_name: system_name\n" +
-			"  system_primaryAddress:\n" +
+			"  $instagram: $instagram\n" +
+			"  $lastFundingType: $lastFundingType\n" +
+			"  $linkedIn: $linkedIn\n" +
+			"  $name: $name\n" +
+			"  $primaryAddress:\n" +
 			"    foo: string\n" +
-			"  system_twitter: system_twitter\n" +
-			"  system_website:\n" +
+			"  $twitter: $twitter\n" +
+			"  $website:\n" +
 			"    - string\n" +
 			"relationships:\n" +
-			"  system_contact:\n" +
+			"  $contacts:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n" +
-			"  system_owner:\n" +
+			"  $owner:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n")
@@ -155,6 +155,15 @@ func TestAccountList(t *testing.T) {
 			"--api-key", "string",
 			"--limit", "1",
 			"--offset", "0",
+		)
+	})
+}
+
+func TestAccountDefinitions(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t, "account", "definitions",
+			"--api-key", "string",
 		)
 	})
 }

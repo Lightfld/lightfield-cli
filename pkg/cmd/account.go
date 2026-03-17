@@ -35,54 +35,54 @@ var accountCreate = requestflag.WithInnerFlags(cli.Command{
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
 		&requestflag.InnerFlag[string]{
-			Name:       "fields.system-name",
-			InnerField: "system_name",
+			Name:       "fields.name",
+			InnerField: "$name",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-facebook",
-			InnerField: "system_facebook",
+			Name:       "fields.facebook",
+			InnerField: "$facebook",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-headcount",
-			InnerField: "system_headcount",
+			Name:       "fields.headcount",
+			InnerField: "$headcount",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-industry",
-			InnerField: "system_industry",
+			Name:       "fields.industry",
+			InnerField: "$industry",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-instagram",
-			InnerField: "system_instagram",
+			Name:       "fields.instagram",
+			InnerField: "$instagram",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-last-funding-type",
-			InnerField: "system_lastFundingType",
+			Name:       "fields.last-funding-type",
+			InnerField: "$lastFundingType",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-linked-in",
-			InnerField: "system_linkedIn",
+			Name:       "fields.linked-in",
+			InnerField: "$linkedIn",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-primary-address",
-			InnerField: "system_primaryAddress",
+			Name:       "fields.primary-address",
+			InnerField: "$primaryAddress",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-twitter",
-			InnerField: "system_twitter",
+			Name:       "fields.twitter",
+			InnerField: "$twitter",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-website",
-			InnerField: "system_website",
+			Name:       "fields.website",
+			InnerField: "$website",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[any]{
-			Name:       "relationships.system-contact",
-			InnerField: "system_contact",
+			Name:       "relationships.contacts",
+			InnerField: "$contacts",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "relationships.system-owner",
-			InnerField: "system_owner",
+			Name:       "relationships.owner",
+			InnerField: "$owner",
 		},
 	},
 })
@@ -124,54 +124,54 @@ var accountUpdate = requestflag.WithInnerFlags(cli.Command{
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-facebook",
-			InnerField: "system_facebook",
+			Name:       "fields.facebook",
+			InnerField: "$facebook",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-headcount",
-			InnerField: "system_headcount",
+			Name:       "fields.headcount",
+			InnerField: "$headcount",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-industry",
-			InnerField: "system_industry",
+			Name:       "fields.industry",
+			InnerField: "$industry",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-instagram",
-			InnerField: "system_instagram",
+			Name:       "fields.instagram",
+			InnerField: "$instagram",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-last-funding-type",
-			InnerField: "system_lastFundingType",
+			Name:       "fields.last-funding-type",
+			InnerField: "$lastFundingType",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-linked-in",
-			InnerField: "system_linkedIn",
+			Name:       "fields.linked-in",
+			InnerField: "$linkedIn",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-name",
-			InnerField: "system_name",
+			Name:       "fields.name",
+			InnerField: "$name",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-primary-address",
-			InnerField: "system_primaryAddress",
+			Name:       "fields.primary-address",
+			InnerField: "$primaryAddress",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-twitter",
-			InnerField: "system_twitter",
+			Name:       "fields.twitter",
+			InnerField: "$twitter",
 		},
 		&requestflag.InnerFlag[any]{
-			Name:       "fields.system-website",
-			InnerField: "system_website",
+			Name:       "fields.website",
+			InnerField: "$website",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.system-contact",
-			InnerField: "system_contact",
+			Name:       "relationships.contacts",
+			InnerField: "$contacts",
 		},
 		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.system-owner",
-			InnerField: "system_owner",
+			Name:       "relationships.owner",
+			InnerField: "$owner",
 		},
 	},
 })
@@ -191,6 +191,15 @@ var accountList = cli.Command{
 		},
 	},
 	Action:          handleAccountList,
+	HideHelpCommand: true,
+}
+
+var accountDefinitions = cli.Command{
+	Name:            "definitions",
+	Usage:           "Perform definitions operation",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleAccountDefinitions,
 	HideHelpCommand: true,
 }
 
@@ -337,4 +346,36 @@ func handleAccountList(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
 	return ShowJSON(os.Stdout, "account list", obj, format, transform)
+}
+
+func handleAccountDefinitions(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Account.Definitions(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(os.Stdout, "account definitions", obj, format, transform)
 }
