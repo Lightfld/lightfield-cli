@@ -4,8 +4,6 @@ The official CLI for the Lightfield REST API.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
-<!-- x-release-please-start-version -->
-
 ## Installation
 
 ### Installing with Go
@@ -13,7 +11,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 To test or install the CLI locally, you need [Go](https://go.dev/doc/install) version 1.22 or later installed.
 
 ```sh
-go install 'github.com/Lightfld/lightfield-cli/cmd/lightfield@latest'
+go install 'github.com/stainless-sdks/lightfield-cli/cmd/lightfield@latest'
 ```
 
 Once you have run `go install`, the binary is placed in your Go bin directory:
@@ -27,8 +25,6 @@ If commands aren't found after installation, add the Go bin directory to your PA
 # Add to your shell profile (.zshrc, .bashrc, etc.)
 export PATH="$PATH:$(go env GOPATH)/bin"
 ```
-
-<!-- x-release-please-end -->
 
 ### Running Locally
 
@@ -48,10 +44,9 @@ lightfield [resource] <command> [flags...]
 ```
 
 ```sh
-lightfield object create \
+lightfield account create \
   --api-key 'My API Key' \
-  --entity-type opportunities \
-  --fields '{name: Big Deal}'
+  --fields '{system_name: Acme Corp}'
 ```
 
 For details about specific commands, use the `--help` flag.

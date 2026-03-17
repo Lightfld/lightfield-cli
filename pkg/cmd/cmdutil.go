@@ -16,7 +16,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/Lightfld/lightfield-cli/internal/jsonview"
+	"github.com/stainless-sdks/lightfield-cli/internal/jsonview"
 	"github.com/stainless-sdks/lightfield-go/option"
 
 	"github.com/charmbracelet/x/term"
