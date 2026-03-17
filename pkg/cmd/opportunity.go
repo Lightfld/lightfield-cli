@@ -15,15 +15,11 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var objectCreate = cli.Command{
+var opportunityCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
 	Usage:   "Perform create operation",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[string]{
-			Name:     "entity-type",
-			Required: true,
-		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
 			Required: true,
@@ -31,40 +27,66 @@ var objectCreate = cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
+			Required: true,
 			BodyPath: "relationships",
 		},
 	},
-	Action:          handleObjectCreate,
+	Action:          handleOpportunityCreate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.system-name",
+			InnerField: "system_name",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.system-stage",
+			InnerField: "system_stage",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.system-account",
+			InnerField: "system_account",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.system-champion",
+			InnerField: "system_champion",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.system-created-by",
+			InnerField: "system_createdBy",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.system-evaluator",
+			InnerField: "system_evaluator",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.system-owner",
+			InnerField: "system_owner",
+		},
+	},
+})
 
-var objectRetrieve = cli.Command{
+var opportunityRetrieve = cli.Command{
 	Name:    "retrieve",
 	Usage:   "Perform retrieve operation",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "entity-type",
-			Required: true,
-		},
-		&requestflag.Flag[string]{
 			Name:     "id",
 			Required: true,
 		},
 	},
-	Action:          handleObjectRetrieve,
+	Action:          handleOpportunityRetrieve,
 	HideHelpCommand: true,
 }
 
-var objectUpdate = cli.Command{
+var opportunityUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Perform update operation",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[string]{
-			Name:     "entity-type",
-			Required: true,
-		},
 		&requestflag.Flag[string]{
 			Name:     "id",
 			Required: true,
@@ -78,19 +100,48 @@ var objectUpdate = cli.Command{
 			BodyPath: "relationships",
 		},
 	},
-	Action:          handleObjectUpdate,
+	Action:          handleOpportunityUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.system-name",
+			InnerField: "system_name",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.system-stage",
+			InnerField: "system_stage",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.system-account",
+			InnerField: "system_account",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.system-champion",
+			InnerField: "system_champion",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.system-created-by",
+			InnerField: "system_createdBy",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.system-evaluator",
+			InnerField: "system_evaluator",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.system-owner",
+			InnerField: "system_owner",
+		},
+	},
+})
 
-var objectList = cli.Command{
+var opportunityList = cli.Command{
 	Name:    "list",
 	Usage:   "Perform list operation",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[string]{
-			Name:     "entity-type",
-			Required: true,
-		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
 			QueryPath: "limit",
@@ -100,22 +151,19 @@ var objectList = cli.Command{
 			QueryPath: "offset",
 		},
 	},
-	Action:          handleObjectList,
+	Action:          handleOpportunityList,
 	HideHelpCommand: true,
 }
 
-func handleObjectCreate(ctx context.Context, cmd *cli.Command) error {
+func handleOpportunityCreate(ctx context.Context, cmd *cli.Command) error {
 	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
-	if !cmd.IsSet("entity-type") && len(unusedArgs) > 0 {
-		cmd.Set("entity-type", unusedArgs[0])
-		unusedArgs = unusedArgs[1:]
-	}
+
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.ObjectNewParams{}
+	params := lightfield.OpportunityNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -130,12 +178,7 @@ func handleObjectCreate(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Object.New(
-		ctx,
-		lightfield.ObjectNewParamsEntityType(cmd.Value("entity-type").(string)),
-		params,
-		options...,
-	)
+	_, err = client.Opportunity.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -143,10 +186,10 @@ func handleObjectCreate(ctx context.Context, cmd *cli.Command) error {
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "object create", obj, format, transform)
+	return ShowJSON(os.Stdout, "opportunity create", obj, format, transform)
 }
 
-func handleObjectRetrieve(ctx context.Context, cmd *cli.Command) error {
+func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
 	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -155,10 +198,6 @@ func handleObjectRetrieve(ctx context.Context, cmd *cli.Command) error {
 	}
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
-	}
-
-	params := lightfield.ObjectGetParams{
-		EntityType: lightfield.ObjectGetParamsEntityType(cmd.Value("entity-type").(string)),
 	}
 
 	options, err := flagOptions(
@@ -174,12 +213,7 @@ func handleObjectRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Object.Get(
-		ctx,
-		cmd.Value("id").(string),
-		params,
-		options...,
-	)
+	_, err = client.Opportunity.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -187,10 +221,10 @@ func handleObjectRetrieve(ctx context.Context, cmd *cli.Command) error {
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "object retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, "opportunity retrieve", obj, format, transform)
 }
 
-func handleObjectUpdate(ctx context.Context, cmd *cli.Command) error {
+func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
 	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -201,9 +235,7 @@ func handleObjectUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.ObjectUpdateParams{
-		EntityType: lightfield.ObjectUpdateParamsEntityType(cmd.Value("entity-type").(string)),
-	}
+	params := lightfield.OpportunityUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -218,7 +250,7 @@ func handleObjectUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Object.Update(
+	_, err = client.Opportunity.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -231,21 +263,18 @@ func handleObjectUpdate(ctx context.Context, cmd *cli.Command) error {
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "object update", obj, format, transform)
+	return ShowJSON(os.Stdout, "opportunity update", obj, format, transform)
 }
 
-func handleObjectList(ctx context.Context, cmd *cli.Command) error {
+func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
 	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
-	if !cmd.IsSet("entity-type") && len(unusedArgs) > 0 {
-		cmd.Set("entity-type", unusedArgs[0])
-		unusedArgs = unusedArgs[1:]
-	}
+
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.ObjectListParams{}
+	params := lightfield.OpportunityListParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -260,12 +289,7 @@ func handleObjectList(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Object.List(
-		ctx,
-		lightfield.ObjectListParamsEntityType(cmd.Value("entity-type").(string)),
-		params,
-		options...,
-	)
+	_, err = client.Opportunity.List(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -273,5 +297,5 @@ func handleObjectList(ctx context.Context, cmd *cli.Command) error {
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "object list", obj, format, transform)
+	return ShowJSON(os.Stdout, "opportunity list", obj, format, transform)
 }

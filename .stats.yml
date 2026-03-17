@@ -1,4 +1,4 @@
-configured_endpoints: 4
-openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/lightfield%2Flightfield-14f01a505ef31988dad62af4f06c191b8be6677adf1cf2aa6dde3d7057395f0a.yml
-openapi_spec_hash: 9856833a03506e323288652f669ad696
-config_hash: 6ff5e708412755c7fb0801af8736231d
+configured_endpoints: 12
+openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/lightfield%2Flightfield-3cc44d342c3ad79f6699a01734263f78e7134eb1a39622c81dbcee3a1c7c1c1f.yml
+openapi_spec_hash: b4231ff9f06dede8072bb6b8825c86bd
+config_hash: f8d81a3f687d5e6aae017c2842a35993

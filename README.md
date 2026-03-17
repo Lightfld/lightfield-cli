@@ -44,10 +44,9 @@ lightfield [resource] <command> [flags...]
 ```
 
 ```sh
-lightfield object create \
+lightfield account create \
   --api-key 'My API Key' \
-  --entity-type opportunities \
-  --fields '{name: Big Deal}'
+  --fields '{system_name: Acme Corp}'
 ```
 
 For details about specific commands, use the `--help` flag.

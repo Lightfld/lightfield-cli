@@ -76,14 +76,36 @@ func init() {
 		},
 		Commands: []*cli.Command{
 			{
-				Name:     "object",
+				Name:     "account",
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
-					&objectCreate,
-					&objectRetrieve,
-					&objectUpdate,
-					&objectList,
+					&accountCreate,
+					&accountRetrieve,
+					&accountUpdate,
+					&accountList,
+				},
+			},
+			{
+				Name:     "contact",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&contactCreate,
+					&contactRetrieve,
+					&contactUpdate,
+					&contactList,
+				},
+			},
+			{
+				Name:     "opportunity",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&opportunityCreate,
+					&opportunityRetrieve,
+					&opportunityUpdate,
+					&opportunityList,
 				},
 			},
 			{
