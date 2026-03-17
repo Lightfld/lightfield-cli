@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/apiquery"
-	"github.com/stainless-sdks/lightfield-cli/internal/requestflag"
-	"github.com/stainless-sdks/lightfield-go"
-	"github.com/stainless-sdks/lightfield-go/option"
+	"github.com/Lightfld/lightfield-cli/internal/apiquery"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
+	"github.com/Lightfld/lightfield-go"
+	"github.com/Lightfld/lightfield-go/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )
@@ -131,14 +131,14 @@ var contactList = cli.Command{
 }
 
 func handleContactCreate(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.ContactNewParams{}
+	params := githubcomlightfldlightfieldgo.ContactNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -165,7 +165,7 @@ func handleContactCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleContactRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -200,7 +200,7 @@ func handleContactRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -210,7 +210,7 @@ func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.ContactUpdateParams{}
+	params := githubcomlightfldlightfieldgo.ContactUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -242,14 +242,14 @@ func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleContactList(ctx context.Context, cmd *cli.Command) error {
-	client := lightfield.NewClient(getDefaultRequestOptions(cmd)...)
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := lightfield.ContactListParams{}
+	params := githubcomlightfldlightfieldgo.ContactListParams{}
 
 	options, err := flagOptions(
 		cmd,

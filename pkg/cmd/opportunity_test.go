@@ -5,8 +5,8 @@ package cmd
 import (
 	"testing"
 
-	"github.com/stainless-sdks/lightfield-cli/internal/mocktest"
-	"github.com/stainless-sdks/lightfield-cli/internal/requestflag"
+	"github.com/Lightfld/lightfield-cli/internal/mocktest"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestOpportunityCreate(t *testing.T) {

@@ -10,8 +10,8 @@ import (
 	"os"
 	"slices"
 
-	"github.com/stainless-sdks/lightfield-cli/pkg/cmd"
-	"github.com/stainless-sdks/lightfield-go"
+	"github.com/Lightfld/lightfield-cli/pkg/cmd"
+	"github.com/Lightfld/lightfield-go"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )
@@ -31,7 +31,7 @@ func main() {
 			exitCode = exitErr.ExitCode()
 		}
 
-		var apierr *lightfield.Error
+		var apierr *githubcomlightfldlightfieldgo.Error
 		if errors.As(err, &apierr) {
 			fmt.Fprintf(os.Stderr, "%s %q: %d %s\n", apierr.Request.Method, apierr.Request.URL, apierr.Response.StatusCode, http.StatusText(apierr.Response.StatusCode))
 			format := app.String("format-error")
