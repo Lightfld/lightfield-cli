@@ -14,8 +14,8 @@ func TestOpportunityCreate(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t, "opportunity", "create",
 			"--api-key", "string",
-			"--fields", "{system_name: system_name, system_stage: system_stage}",
-			"--relationships", "{system_account: string, system_champion: string, system_createdBy: string, system_evaluator: string, system_owner: string}",
+			"--fields", "{$name: $name, $stage: $stage}",
+			"--relationships", "{$account: string, $champion: string, $createdBy: string, $evaluator: string, $owner: string}",
 		)
 	})
 
@@ -27,13 +27,13 @@ func TestOpportunityCreate(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t, "opportunity", "create",
 			"--api-key", "string",
-			"--fields.system-name", "system_name",
-			"--fields.system-stage", "system_stage",
-			"--relationships.system-account", "string",
-			"--relationships.system-champion", "string",
-			"--relationships.system-created-by", "string",
-			"--relationships.system-evaluator", "string",
-			"--relationships.system-owner", "string",
+			"--fields.name", "$name",
+			"--fields.stage", "$stage",
+			"--relationships.account", "string",
+			"--relationships.champion", "string",
+			"--relationships.created-by", "string",
+			"--relationships.evaluator", "string",
+			"--relationships.owner", "string",
 		)
 	})
 
@@ -41,14 +41,14 @@ func TestOpportunityCreate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  system_name: system_name\n" +
-			"  system_stage: system_stage\n" +
+			"  $name: $name\n" +
+			"  $stage: $stage\n" +
 			"relationships:\n" +
-			"  system_account: string\n" +
-			"  system_champion: string\n" +
-			"  system_createdBy: string\n" +
-			"  system_evaluator: string\n" +
-			"  system_owner: string\n")
+			"  $account: string\n" +
+			"  $champion: string\n" +
+			"  $createdBy: string\n" +
+			"  $evaluator: string\n" +
+			"  $owner: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData, "opportunity", "create",
 			"--api-key", "string",
@@ -72,8 +72,8 @@ func TestOpportunityUpdate(t *testing.T) {
 			t, "opportunity", "update",
 			"--api-key", "string",
 			"--id", "id",
-			"--fields", "{system_name: system_name, system_stage: system_stage}",
-			"--relationships", "{system_account: {add: string, remove: string, replace: string}, system_champion: {add: string, remove: string, replace: string}, system_createdBy: {add: string, remove: string, replace: string}, system_evaluator: {add: string, remove: string, replace: string}, system_owner: {add: string, remove: string, replace: string}}",
+			"--fields", "{$name: $name, $stage: $stage}",
+			"--relationships", "{$champion: {add: string, remove: string, replace: string}, $evaluator: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -86,13 +86,11 @@ func TestOpportunityUpdate(t *testing.T) {
 			t, "opportunity", "update",
 			"--api-key", "string",
 			"--id", "id",
-			"--fields.system-name", "system_name",
-			"--fields.system-stage", "system_stage",
-			"--relationships.system-account", "{add: string, remove: string, replace: string}",
-			"--relationships.system-champion", "{add: string, remove: string, replace: string}",
-			"--relationships.system-created-by", "{add: string, remove: string, replace: string}",
-			"--relationships.system-evaluator", "{add: string, remove: string, replace: string}",
-			"--relationships.system-owner", "{add: string, remove: string, replace: string}",
+			"--fields.name", "$name",
+			"--fields.stage", "$stage",
+			"--relationships.champion", "{add: string, remove: string, replace: string}",
+			"--relationships.evaluator", "{add: string, remove: string, replace: string}",
+			"--relationships.owner", "{add: string, remove: string, replace: string}",
 		)
 	})
 
@@ -100,26 +98,18 @@ func TestOpportunityUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  system_name: system_name\n" +
-			"  system_stage: system_stage\n" +
+			"  $name: $name\n" +
+			"  $stage: $stage\n" +
 			"relationships:\n" +
-			"  system_account:\n" +
+			"  $champion:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n" +
-			"  system_champion:\n" +
+			"  $evaluator:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n" +
-			"  system_createdBy:\n" +
-			"    add: string\n" +
-			"    remove: string\n" +
-			"    replace: string\n" +
-			"  system_evaluator:\n" +
-			"    add: string\n" +
-			"    remove: string\n" +
-			"    replace: string\n" +
-			"  system_owner:\n" +
+			"  $owner:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n")
@@ -138,6 +128,15 @@ func TestOpportunityList(t *testing.T) {
 			"--api-key", "string",
 			"--limit", "1",
 			"--offset", "0",
+		)
+	})
+}
+
+func TestOpportunityDefinitions(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t, "opportunity", "definitions",
+			"--api-key", "string",
 		)
 	})
 }

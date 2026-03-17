@@ -50,7 +50,7 @@ lightfield [resource] <command> [flags...]
 ```sh
 lightfield account create \
   --api-key 'My API Key' \
-  --fields '{system_name: Acme Corp}'
+  --fields '{$name: Acme Corp}'
 ```
 
 For details about specific commands, use the `--help` flag.

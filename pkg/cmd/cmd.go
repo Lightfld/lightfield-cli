@@ -84,6 +84,7 @@ func init() {
 					&accountRetrieve,
 					&accountUpdate,
 					&accountList,
+					&accountDefinitions,
 				},
 			},
 			{
@@ -95,6 +96,7 @@ func init() {
 					&contactRetrieve,
 					&contactUpdate,
 					&contactList,
+					&contactDefinitions,
 				},
 			},
 			{
@@ -106,6 +108,7 @@ func init() {
 					&opportunityRetrieve,
 					&opportunityUpdate,
 					&opportunityList,
+					&opportunityDefinitions,
 				},
 			},
 			{
