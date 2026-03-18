@@ -12,8 +12,9 @@ import (
 func TestOpportunityCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "opportunity", "create",
+			t,
 			"--api-key", "string",
+			"opportunity", "create",
 			"--fields", "{$name: $name, $stage: $stage}",
 			"--relationships", "{$account: string, $champion: string, $createdBy: string, $evaluator: string, $owner: string}",
 		)
@@ -25,8 +26,9 @@ func TestOpportunityCreate(t *testing.T) {
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
-			t, "opportunity", "create",
+			t,
 			"--api-key", "string",
+			"opportunity", "create",
 			"--fields.name", "$name",
 			"--fields.stage", "$stage",
 			"--relationships.account", "string",
@@ -50,8 +52,9 @@ func TestOpportunityCreate(t *testing.T) {
 			"  $evaluator: string\n" +
 			"  $owner: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "opportunity", "create",
+			t, pipeData,
 			"--api-key", "string",
+			"opportunity", "create",
 		)
 	})
 }
@@ -59,8 +62,9 @@ func TestOpportunityCreate(t *testing.T) {
 func TestOpportunityRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "opportunity", "retrieve",
+			t,
 			"--api-key", "string",
+			"opportunity", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -69,8 +73,9 @@ func TestOpportunityRetrieve(t *testing.T) {
 func TestOpportunityUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "opportunity", "update",
+			t,
 			"--api-key", "string",
+			"opportunity", "update",
 			"--id", "id",
 			"--fields", "{$name: $name, $stage: $stage}",
 			"--relationships", "{$champion: {add: string, remove: string, replace: string}, $evaluator: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
@@ -83,8 +88,9 @@ func TestOpportunityUpdate(t *testing.T) {
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
-			t, "opportunity", "update",
+			t,
 			"--api-key", "string",
+			"opportunity", "update",
 			"--id", "id",
 			"--fields.name", "$name",
 			"--fields.stage", "$stage",
@@ -114,8 +120,9 @@ func TestOpportunityUpdate(t *testing.T) {
 			"    remove: string\n" +
 			"    replace: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "opportunity", "update",
+			t, pipeData,
 			"--api-key", "string",
+			"opportunity", "update",
 			"--id", "id",
 		)
 	})
@@ -124,8 +131,9 @@ func TestOpportunityUpdate(t *testing.T) {
 func TestOpportunityList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "opportunity", "list",
+			t,
 			"--api-key", "string",
+			"opportunity", "list",
 			"--limit", "1",
 			"--offset", "0",
 		)
@@ -135,8 +143,9 @@ func TestOpportunityList(t *testing.T) {
 func TestOpportunityDefinitions(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "opportunity", "definitions",
+			t,
 			"--api-key", "string",
+			"opportunity", "definitions",
 		)
 	})
 }
