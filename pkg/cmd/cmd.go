@@ -112,6 +112,16 @@ func init() {
 				},
 			},
 			{
+				Name:     "webhook",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&webhookStatus,
+					&webhookTriggerGet,
+					&webhookTriggerPost,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "lightfield @manpages [-o lightfield.1] [--gzip]",
