@@ -112,6 +112,23 @@ func init() {
 				},
 			},
 			{
+				Name:     "member",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&memberRetrieve,
+					&memberList,
+				},
+			},
+			{
+				Name:     "workflow-run",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&workflowRunStatus,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "lightfield @manpages [-o lightfield.1] [--gzip]",
