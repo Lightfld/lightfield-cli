@@ -17,16 +17,18 @@ import (
 
 var contactCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
-	Usage:   "Perform create operation",
+	Usage:   "Creates a new contact record.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
+			Usage:    "Field values for the new contact. System fields use a `$` prefix (e.g. `$email`, `$name`); custom attributes use their bare slug. Note: `$name` is an object `{ firstName, lastName }`, not a plain string. Call the [definitions endpoint](/api/resources/contact/methods/definitions) to discover available fields and their types. See [Fields and relationships](/using-the-api/fields-and-relationships/) for value type details.",
 			Required: true,
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
+			Usage:    "Relationships to set on the new contact. System relationships use a `$` prefix (e.g. `$accounts`); custom relationships use their bare slug. Each value is a single entity ID or an array of IDs. Call the [definitions endpoint](/api/resources/contact/methods/definitions) to list available relationship keys.",
 			BodyPath: "relationships",
 		},
 	},
@@ -36,20 +38,24 @@ var contactCreate = requestflag.WithInnerFlags(cli.Command{
 	"fields": {
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.email",
+			Usage:      "List of email addresses for the contact.",
 			InnerField: "$email",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.name",
+			Usage:      "The contact's name. Unlike other resources, this is an object: `{ firstName?: string, lastName?: string }`, not a plain string.",
 			InnerField: "$name",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.profile-photo-url",
+			Usage:      "URL of the contact's profile photo.",
 			InnerField: "$profilePhotoUrl",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[any]{
 			Name:       "relationships.accounts",
+			Usage:      "ID(s) of accounts to associate with this contact.",
 			InnerField: "$accounts",
 		},
 	},
@@ -57,11 +63,12 @@ var contactCreate = requestflag.WithInnerFlags(cli.Command{
 
 var contactRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Perform retrieve operation",
+	Usage:   "Retrieves a single contact by its ID.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "id",
+			Usage:    "Unique identifier of the contact to retrieve.",
 			Required: true,
 		},
 	},
@@ -71,19 +78,22 @@ var contactRetrieve = cli.Command{
 
 var contactUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Perform update operation",
+	Usage:   "Updates an existing contact by ID. Only included fields and relationships are\nmodified.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "id",
+			Usage:    "Unique identifier of the contact to update.",
 			Required: true,
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
+			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$email`); custom attributes use their bare slug. Note: `$name` is an object `{ firstName, lastName }`, not a plain string. Call the [definitions endpoint](/api/resources/contact/methods/definitions) for available fields and types. See [Fields and relationships](/using-the-api/fields-and-relationships/) for value type details.",
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
+			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$accounts`). Each value is an operation object with `add`, `remove`, or `replace`.",
 			BodyPath: "relationships",
 		},
 	},
@@ -93,20 +103,24 @@ var contactUpdate = requestflag.WithInnerFlags(cli.Command{
 	"fields": {
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.email",
+			Usage:      "List of email addresses for the contact.",
 			InnerField: "$email",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.name",
+			Usage:      "The contact's name. Unlike other resources, this is an object: `{ firstName?: string, lastName?: string }`, not a plain string.",
 			InnerField: "$name",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.profile-photo-url",
+			Usage:      "URL of the contact's profile photo.",
 			InnerField: "$profilePhotoUrl",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[map[string]any]{
 			Name:       "relationships.accounts",
+			Usage:      "Operation to modify associated accounts.",
 			InnerField: "$accounts",
 		},
 	},
@@ -114,15 +128,17 @@ var contactUpdate = requestflag.WithInnerFlags(cli.Command{
 
 var contactList = cli.Command{
 	Name:    "list",
-	Usage:   "Perform list operation",
+	Usage:   "Returns a paginated list of contacts. Use `offset` and `limit` to paginate\nthrough results. See <u>[List endpoints](/using-the-api/list-endpoints/)</u> for\nmore information about pagination.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
 			Name:      "limit",
+			Usage:     "Maximum number of records to return. Defaults to 25, maximum 100.",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[int64]{
 			Name:      "offset",
+			Usage:     "Number of records to skip for pagination. Defaults to 0.",
 			QueryPath: "offset",
 		},
 	},
@@ -132,7 +148,7 @@ var contactList = cli.Command{
 
 var contactDefinitions = cli.Command{
 	Name:            "definitions",
-	Usage:           "Perform definitions operation",
+	Usage:           "Returns the schema for all field and relationship definitions available on\ncontacts, including both system-defined and custom fields. Useful for\nunderstanding the shape of contact data before creating or updating records. See\n<u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for\nmore details.",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
 	Action:          handleContactDefinitions,
