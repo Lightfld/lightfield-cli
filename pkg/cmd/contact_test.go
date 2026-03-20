@@ -16,7 +16,7 @@ func TestContactCreate(t *testing.T) {
 			"--api-key", "string",
 			"contact", "create",
 			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
-			"--relationships", "{$accounts: string}",
+			"--relationships", "{$account: string}",
 		)
 	})
 
@@ -32,7 +32,7 @@ func TestContactCreate(t *testing.T) {
 			"--fields.email", "[string]",
 			"--fields.name", "{firstName: firstName, lastName: lastName}",
 			"--fields.profile-photo-url", "$profilePhotoUrl",
-			"--relationships.accounts", "string",
+			"--relationships.account", "string",
 		)
 	})
 
@@ -47,7 +47,7 @@ func TestContactCreate(t *testing.T) {
 			"    lastName: lastName\n" +
 			"  $profilePhotoUrl: $profilePhotoUrl\n" +
 			"relationships:\n" +
-			"  $accounts: string\n")
+			"  $account: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -75,7 +75,7 @@ func TestContactUpdate(t *testing.T) {
 			"contact", "update",
 			"--id", "id",
 			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
-			"--relationships", "{$accounts: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -92,7 +92,7 @@ func TestContactUpdate(t *testing.T) {
 			"--fields.email", "[string]",
 			"--fields.name", "{firstName: firstName, lastName: lastName}",
 			"--fields.profile-photo-url", "$profilePhotoUrl",
-			"--relationships.accounts", "{add: string, remove: string, replace: string}",
+			"--relationships.account", "{add: string, remove: string, replace: string}",
 		)
 	})
 
@@ -107,7 +107,7 @@ func TestContactUpdate(t *testing.T) {
 			"    lastName: lastName\n" +
 			"  $profilePhotoUrl: $profilePhotoUrl\n" +
 			"relationships:\n" +
-			"  $accounts:\n" +
+			"  $account:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n")

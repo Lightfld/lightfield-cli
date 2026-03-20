@@ -16,7 +16,7 @@ func TestAccountCreate(t *testing.T) {
 			"--api-key", "string",
 			"account", "create",
 			"--fields", "{$name: $name, $facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
-			"--relationships", "{$contacts: string, $owner: string}",
+			"--relationships", "{$contact: string, $owner: string}",
 		)
 	})
 
@@ -39,7 +39,7 @@ func TestAccountCreate(t *testing.T) {
 			"--fields.primary-address", "{city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}",
 			"--fields.twitter", "$twitter",
 			"--fields.website", "[string]",
-			"--relationships.contacts", "string",
+			"--relationships.contact", "string",
 			"--relationships.owner", "string",
 		)
 	})
@@ -69,7 +69,7 @@ func TestAccountCreate(t *testing.T) {
 			"  $website:\n" +
 			"    - string\n" +
 			"relationships:\n" +
-			"  $contacts: string\n" +
+			"  $contact: string\n" +
 			"  $owner: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
@@ -98,7 +98,7 @@ func TestAccountUpdate(t *testing.T) {
 			"account", "update",
 			"--id", "id",
 			"--fields", "{$facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $name: $name, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
-			"--relationships", "{$contacts: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$contact: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -122,7 +122,7 @@ func TestAccountUpdate(t *testing.T) {
 			"--fields.primary-address", "{city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}",
 			"--fields.twitter", "$twitter",
 			"--fields.website", "[string]",
-			"--relationships.contacts", "{add: string, remove: string, replace: string}",
+			"--relationships.contact", "{add: string, remove: string, replace: string}",
 			"--relationships.owner", "{add: string, remove: string, replace: string}",
 		)
 	})
@@ -152,7 +152,7 @@ func TestAccountUpdate(t *testing.T) {
 			"  $website:\n" +
 			"    - string\n" +
 			"relationships:\n" +
-			"  $contacts:\n" +
+			"  $contact:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n" +

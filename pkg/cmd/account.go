@@ -22,13 +22,13 @@ var accountCreate = requestflag.WithInnerFlags(cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values for the new account. System fields use a `$` prefix (e.g. `$name`, `$website`); custom attributes use their bare slug (e.g. `tier`, `renewalDate`). Required: `$name` (string). Fields of type `single_select` or `multi_select` accept either an option ID or label from the field's `typeConfiguration.options` — call the **[definitions endpoint](/api/resources/account/methods/definitions)** to discover available fields and options. See **[Fields and relationships](/using-the-api/fields-and-relationships/)** for value type details.",
+			Usage:    "Field values for the new account. System fields use a `$` prefix (e.g. `$name`, `$website`); custom attributes use their bare slug (e.g. `tier`, `renewalDate`). Required: `$name` (string). Fields of type `SINGLE_SELECT` or `MULTI_SELECT` accept either an option ID or label from the field's `typeConfiguration.options` — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> to discover available fields and options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
 			Required: true,
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationships to set on the new account. System relationships use a `$` prefix (e.g. `$owner`, `$contacts`); custom relationships use their bare slug. Each value is a single entity ID or an array of IDs. Call the **[definitions endpoint](/api/resources/account/methods/definitions)** to list available relationship keys.",
+			Usage:    "Relationships to set on the new account. System relationships use a `$` prefix (e.g. `$owner`, `$contact`); custom relationships use their bare slug. Each value is a single entity ID or an array of IDs. Call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> to list available relationship keys.",
 			BodyPath: "relationships",
 		},
 	},
@@ -43,55 +43,55 @@ var accountCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.facebook",
-			Usage:      "Facebook handle or profile identifier (SOCIAL_HANDLE type).",
+			Usage:      "Facebook handle or profile identifier (`SOCIAL_HANDLE`).",
 			InnerField: "$facebook",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.headcount",
-			Usage:      "Employee count range (SINGLE_SELECT). Pass the option ID or label from the field definition.",
+			Usage:      "Employee count range (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
 			InnerField: "$headcount",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.industry",
-			Usage:      "Industries the account operates in (MULTI_SELECT). Pass option IDs or labels from the field definition.",
+			Usage:      "Industries the account operates in (`MULTI_SELECT`). Pass option IDs or labels from the field definition.",
 			InnerField: "$industry",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.instagram",
-			Usage:      "Instagram handle or profile identifier (SOCIAL_HANDLE type).",
+			Usage:      "Instagram handle or profile identifier (`SOCIAL_HANDLE`).",
 			InnerField: "$instagram",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.last-funding-type",
-			Usage:      "Most recent funding round type (SINGLE_SELECT). Pass the option ID or label from the field definition.",
+			Usage:      "Most recent funding round type (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
 			InnerField: "$lastFundingType",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.linked-in",
-			Usage:      "LinkedIn handle or profile identifier (SOCIAL_HANDLE type).",
+			Usage:      "LinkedIn handle or profile identifier (`SOCIAL_HANDLE`).",
 			InnerField: "$linkedIn",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.primary-address",
-			Usage:      "Primary address (ADDRESS type).",
+			Usage:      "Primary address (`ADDRESS`).",
 			InnerField: "$primaryAddress",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.twitter",
-			Usage:      "Twitter/X handle (SOCIAL_HANDLE type).",
+			Usage:      "Twitter/X handle (`SOCIAL_HANDLE`).",
 			InnerField: "$twitter",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.website",
-			Usage:      "Website URLs associated with the account (URL type, multi-value).",
+			Usage:      "Website URLs associated with the account (`URL`, multi-value).",
 			InnerField: "$website",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[any]{
-			Name:       "relationships.contacts",
+			Name:       "relationships.contact",
 			Usage:      "ID(s) of contacts to associate with this account.",
-			InnerField: "$contacts",
+			InnerField: "$contact",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "relationships.owner",
@@ -128,12 +128,12 @@ var accountUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$name`); custom attributes use their bare slug. Select-type fields accept an option ID or label — call the **[definitions endpoint](/api/resources/account/methods/definitions)** for available options. See **[Fields and relationships](/using-the-api/fields-and-relationships/)** for value type details.",
+			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$name`); custom attributes use their bare slug. `SINGLE_SELECT` and `MULTI_SELECT` fields accept an option ID or label — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> for available options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$owner`, `$contacts`). Each value is an operation object with `add`, `remove`, or `replace`.",
+			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$owner`, `$contact`). Each value is an operation object with `add`, `remove`, or `replace`.",
 			BodyPath: "relationships",
 		},
 	},
@@ -143,32 +143,32 @@ var accountUpdate = requestflag.WithInnerFlags(cli.Command{
 	"fields": {
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.facebook",
-			Usage:      "Facebook handle or profile identifier (SOCIAL_HANDLE type).",
+			Usage:      "Facebook handle or profile identifier (`SOCIAL_HANDLE`).",
 			InnerField: "$facebook",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.headcount",
-			Usage:      "Employee count range (SINGLE_SELECT). Pass the option ID or label from the field definition.",
+			Usage:      "Employee count range (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
 			InnerField: "$headcount",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.industry",
-			Usage:      "Industries the account operates in (MULTI_SELECT). Pass option IDs or labels from the field definition.",
+			Usage:      "Industries the account operates in (`MULTI_SELECT`). Pass option IDs or labels from the field definition.",
 			InnerField: "$industry",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.instagram",
-			Usage:      "Instagram handle or profile identifier (SOCIAL_HANDLE type).",
+			Usage:      "Instagram handle or profile identifier (`SOCIAL_HANDLE`).",
 			InnerField: "$instagram",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.last-funding-type",
-			Usage:      "Most recent funding round type (SINGLE_SELECT). Pass the option ID or label from the field definition.",
+			Usage:      "Most recent funding round type (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
 			InnerField: "$lastFundingType",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.linked-in",
-			Usage:      "LinkedIn handle or profile identifier (SOCIAL_HANDLE type).",
+			Usage:      "LinkedIn handle or profile identifier (`SOCIAL_HANDLE`).",
 			InnerField: "$linkedIn",
 		},
 		&requestflag.InnerFlag[any]{
@@ -178,25 +178,25 @@ var accountUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.primary-address",
-			Usage:      "Primary address (ADDRESS type).",
+			Usage:      "Primary address (`ADDRESS`).",
 			InnerField: "$primaryAddress",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.twitter",
-			Usage:      "Twitter/X handle (SOCIAL_HANDLE type).",
+			Usage:      "Twitter/X handle (`SOCIAL_HANDLE`).",
 			InnerField: "$twitter",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.website",
-			Usage:      "Website URLs associated with the account (URL type, multi-value).",
+			Usage:      "Website URLs associated with the account (`URL`, multi-value).",
 			InnerField: "$website",
 		},
 	},
 	"relationships": {
 		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.contacts",
+			Name:       "relationships.contact",
 			Usage:      "Operation to modify associated contacts.",
-			InnerField: "$contacts",
+			InnerField: "$contact",
 		},
 		&requestflag.InnerFlag[map[string]any]{
 			Name:       "relationships.owner",
@@ -213,7 +213,7 @@ var accountList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "Maximum number of records to return. Defaults to 25, maximum 100.",
+			Usage:     "Maximum number of records to return. Defaults to 25, maximum 25.",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[int64]{
