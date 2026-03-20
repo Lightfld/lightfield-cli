@@ -12,10 +12,11 @@ import (
 func TestAccountCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "account", "create",
+			t,
 			"--api-key", "string",
-			"--fields", "{$name: $name, $facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $primaryAddress: {foo: string}, $twitter: $twitter, $website: [string]}",
-			"--relationships", "{$contacts: string, $owner: string}",
+			"account", "create",
+			"--fields", "{$name: $name, $facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
+			"--relationships", "{$contact: string, $owner: string}",
 		)
 	})
 
@@ -25,8 +26,9 @@ func TestAccountCreate(t *testing.T) {
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
-			t, "account", "create",
+			t,
 			"--api-key", "string",
+			"account", "create",
 			"--fields.name", "$name",
 			"--fields.facebook", "$facebook",
 			"--fields.headcount", "$headcount",
@@ -34,10 +36,10 @@ func TestAccountCreate(t *testing.T) {
 			"--fields.instagram", "$instagram",
 			"--fields.last-funding-type", "$lastFundingType",
 			"--fields.linked-in", "$linkedIn",
-			"--fields.primary-address", "{foo: string}",
+			"--fields.primary-address", "{city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}",
 			"--fields.twitter", "$twitter",
 			"--fields.website", "[string]",
-			"--relationships.contacts", "string",
+			"--relationships.contact", "string",
 			"--relationships.owner", "string",
 		)
 	})
@@ -55,16 +57,24 @@ func TestAccountCreate(t *testing.T) {
 			"  $lastFundingType: $lastFundingType\n" +
 			"  $linkedIn: $linkedIn\n" +
 			"  $primaryAddress:\n" +
-			"    foo: string\n" +
+			"    city: city\n" +
+			"    country: country\n" +
+			"    latitude: 0\n" +
+			"    longitude: 0\n" +
+			"    postalCode: postalCode\n" +
+			"    state: state\n" +
+			"    street: street\n" +
+			"    street2: street2\n" +
 			"  $twitter: $twitter\n" +
 			"  $website:\n" +
 			"    - string\n" +
 			"relationships:\n" +
-			"  $contacts: string\n" +
+			"  $contact: string\n" +
 			"  $owner: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "account", "create",
+			t, pipeData,
 			"--api-key", "string",
+			"account", "create",
 		)
 	})
 }
@@ -72,8 +82,9 @@ func TestAccountCreate(t *testing.T) {
 func TestAccountRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "account", "retrieve",
+			t,
 			"--api-key", "string",
+			"account", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -82,11 +93,12 @@ func TestAccountRetrieve(t *testing.T) {
 func TestAccountUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "account", "update",
+			t,
 			"--api-key", "string",
+			"account", "update",
 			"--id", "id",
-			"--fields", "{$facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $name: $name, $primaryAddress: {foo: string}, $twitter: $twitter, $website: [string]}",
-			"--relationships", "{$contacts: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
+			"--fields", "{$facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $name: $name, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
+			"--relationships", "{$contact: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -96,8 +108,9 @@ func TestAccountUpdate(t *testing.T) {
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
-			t, "account", "update",
+			t,
 			"--api-key", "string",
+			"account", "update",
 			"--id", "id",
 			"--fields.facebook", "$facebook",
 			"--fields.headcount", "$headcount",
@@ -106,10 +119,10 @@ func TestAccountUpdate(t *testing.T) {
 			"--fields.last-funding-type", "$lastFundingType",
 			"--fields.linked-in", "$linkedIn",
 			"--fields.name", "$name",
-			"--fields.primary-address", "{foo: string}",
+			"--fields.primary-address", "{city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}",
 			"--fields.twitter", "$twitter",
 			"--fields.website", "[string]",
-			"--relationships.contacts", "{add: string, remove: string, replace: string}",
+			"--relationships.contact", "{add: string, remove: string, replace: string}",
 			"--relationships.owner", "{add: string, remove: string, replace: string}",
 		)
 	})
@@ -127,12 +140,19 @@ func TestAccountUpdate(t *testing.T) {
 			"  $linkedIn: $linkedIn\n" +
 			"  $name: $name\n" +
 			"  $primaryAddress:\n" +
-			"    foo: string\n" +
+			"    city: city\n" +
+			"    country: country\n" +
+			"    latitude: 0\n" +
+			"    longitude: 0\n" +
+			"    postalCode: postalCode\n" +
+			"    state: state\n" +
+			"    street: street\n" +
+			"    street2: street2\n" +
 			"  $twitter: $twitter\n" +
 			"  $website:\n" +
 			"    - string\n" +
 			"relationships:\n" +
-			"  $contacts:\n" +
+			"  $contact:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n" +
@@ -141,8 +161,9 @@ func TestAccountUpdate(t *testing.T) {
 			"    remove: string\n" +
 			"    replace: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "account", "update",
+			t, pipeData,
 			"--api-key", "string",
+			"account", "update",
 			"--id", "id",
 		)
 	})
@@ -151,8 +172,9 @@ func TestAccountUpdate(t *testing.T) {
 func TestAccountList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "account", "list",
+			t,
 			"--api-key", "string",
+			"account", "list",
 			"--limit", "1",
 			"--offset", "0",
 		)
@@ -162,8 +184,9 @@ func TestAccountList(t *testing.T) {
 func TestAccountDefinitions(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "account", "definitions",
+			t,
 			"--api-key", "string",
+			"account", "definitions",
 		)
 	})
 }

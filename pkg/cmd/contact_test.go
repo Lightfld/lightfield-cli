@@ -12,10 +12,11 @@ import (
 func TestContactCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "contact", "create",
+			t,
 			"--api-key", "string",
+			"contact", "create",
 			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
-			"--relationships", "{$accounts: string}",
+			"--relationships", "{$account: string}",
 		)
 	})
 
@@ -25,12 +26,13 @@ func TestContactCreate(t *testing.T) {
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
-			t, "contact", "create",
+			t,
 			"--api-key", "string",
+			"contact", "create",
 			"--fields.email", "[string]",
 			"--fields.name", "{firstName: firstName, lastName: lastName}",
 			"--fields.profile-photo-url", "$profilePhotoUrl",
-			"--relationships.accounts", "string",
+			"--relationships.account", "string",
 		)
 	})
 
@@ -45,10 +47,11 @@ func TestContactCreate(t *testing.T) {
 			"    lastName: lastName\n" +
 			"  $profilePhotoUrl: $profilePhotoUrl\n" +
 			"relationships:\n" +
-			"  $accounts: string\n")
+			"  $account: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "contact", "create",
+			t, pipeData,
 			"--api-key", "string",
+			"contact", "create",
 		)
 	})
 }
@@ -56,8 +59,9 @@ func TestContactCreate(t *testing.T) {
 func TestContactRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "contact", "retrieve",
+			t,
 			"--api-key", "string",
+			"contact", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -66,11 +70,12 @@ func TestContactRetrieve(t *testing.T) {
 func TestContactUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "contact", "update",
+			t,
 			"--api-key", "string",
+			"contact", "update",
 			"--id", "id",
 			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
-			"--relationships", "{$accounts: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -80,13 +85,14 @@ func TestContactUpdate(t *testing.T) {
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
-			t, "contact", "update",
+			t,
 			"--api-key", "string",
+			"contact", "update",
 			"--id", "id",
 			"--fields.email", "[string]",
 			"--fields.name", "{firstName: firstName, lastName: lastName}",
 			"--fields.profile-photo-url", "$profilePhotoUrl",
-			"--relationships.accounts", "{add: string, remove: string, replace: string}",
+			"--relationships.account", "{add: string, remove: string, replace: string}",
 		)
 	})
 
@@ -101,13 +107,14 @@ func TestContactUpdate(t *testing.T) {
 			"    lastName: lastName\n" +
 			"  $profilePhotoUrl: $profilePhotoUrl\n" +
 			"relationships:\n" +
-			"  $accounts:\n" +
+			"  $account:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "contact", "update",
+			t, pipeData,
 			"--api-key", "string",
+			"contact", "update",
 			"--id", "id",
 		)
 	})
@@ -116,8 +123,9 @@ func TestContactUpdate(t *testing.T) {
 func TestContactList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "contact", "list",
+			t,
 			"--api-key", "string",
+			"contact", "list",
 			"--limit", "1",
 			"--offset", "0",
 		)
@@ -127,8 +135,9 @@ func TestContactList(t *testing.T) {
 func TestContactDefinitions(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "contact", "definitions",
+			t,
 			"--api-key", "string",
+			"contact", "definitions",
 		)
 	})
 }
