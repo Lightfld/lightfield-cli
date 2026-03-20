@@ -22,13 +22,13 @@ var opportunityCreate = requestflag.WithInnerFlags(cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values for the new opportunity. System fields use a `$` prefix (e.g. `$name`, `$stage`); custom attributes use their bare slug. Required: `$name` (string) and `$stage` (option ID or label). Fields of type `single_select` or `multi_select` accept either an option ID or label from the field's `typeConfiguration.options` — call the **[definitions endpoint](/api/resources/opportunity/methods/definitions)** to discover available fields and options. See **[Fields and relationships](/using-the-api/fields-and-relationships/)** for value type details.",
+			Usage:    "Field values for the new opportunity. System fields use a `$` prefix (e.g. `$name`, `$stage`); custom attributes use their bare slug. Required: `$name` (string) and `$stage` (option ID or label). Fields of type `SINGLE_SELECT` or `MULTI_SELECT` accept either an option ID or label from the field's `typeConfiguration.options` — call the <u>[definitions endpoint](/api/resources/opportunity/methods/definitions)</u> to discover available fields and options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
 			Required: true,
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationships to set on the new opportunity. System relationships use a `$` prefix (e.g. `$account`, `$owner`); custom relationships use their bare slug. `$account` is required. Each value is a single entity ID or an array of IDs. Call the **[definitions endpoint](/api/resources/opportunity/methods/definitions)** to list available relationship keys.",
+			Usage:    "Relationships to set on the new opportunity. System relationships use a `$` prefix (e.g. `$account`, `$owner`); custom relationships use their bare slug. `$account` is required. Each value is a single entity ID or an array of IDs. Call the <u>[definitions endpoint](/api/resources/opportunity/methods/definitions)</u> to list available relationship keys.",
 			Required: true,
 			BodyPath: "relationships",
 		},
@@ -44,7 +44,7 @@ var opportunityCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "fields.stage",
-			Usage:      "Pipeline stage. Pass the option ID or label from the field definition.",
+			Usage:      "Pipeline stage (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
 			InnerField: "$stage",
 		},
 	},
@@ -104,7 +104,7 @@ var opportunityUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$name`, `$stage`); custom attributes use their bare slug. Select-type fields accept an option ID or label — call the **[definitions endpoint](/api/resources/opportunity/methods/definitions)** for available options. See **[Fields and relationships](/using-the-api/fields-and-relationships/)** for value type details.",
+			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$name`, `$stage`); custom attributes use their bare slug. `SINGLE_SELECT` and `MULTI_SELECT` fields accept an option ID or label — call the <u>[definitions endpoint](/api/resources/opportunity/methods/definitions)</u> for available options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -124,7 +124,7 @@ var opportunityUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "fields.stage",
-			Usage:      "Pipeline stage. Pass the option ID or label from the field definition.",
+			Usage:      "Pipeline stage (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
 			InnerField: "$stage",
 		},
 	},
