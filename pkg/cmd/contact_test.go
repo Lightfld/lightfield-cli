@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/Lightfld/lightfield-cli/internal/mocktest"
-	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestContactCreate(t *testing.T) {
@@ -17,22 +16,6 @@ func TestContactCreate(t *testing.T) {
 			"contact", "create",
 			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
 			"--relationships", "{$account: string}",
-		)
-	})
-
-	t.Run("inner flags", func(t *testing.T) {
-		// Check that inner flags have been set up correctly
-		requestflag.CheckInnerFlags(contactCreate)
-
-		// Alternative argument passing style using inner flags
-		mocktest.TestRunMockTestWithFlags(
-			t,
-			"--api-key", "string",
-			"contact", "create",
-			"--fields.email", "[string]",
-			"--fields.name", "{firstName: firstName, lastName: lastName}",
-			"--fields.profile-photo-url", "$profilePhotoUrl",
-			"--relationships.account", "string",
 		)
 	})
 
@@ -76,23 +59,6 @@ func TestContactUpdate(t *testing.T) {
 			"--id", "id",
 			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
 			"--relationships", "{$account: {add: string, remove: string, replace: string}}",
-		)
-	})
-
-	t.Run("inner flags", func(t *testing.T) {
-		// Check that inner flags have been set up correctly
-		requestflag.CheckInnerFlags(contactUpdate)
-
-		// Alternative argument passing style using inner flags
-		mocktest.TestRunMockTestWithFlags(
-			t,
-			"--api-key", "string",
-			"contact", "update",
-			"--id", "id",
-			"--fields.email", "[string]",
-			"--fields.name", "{firstName: firstName, lastName: lastName}",
-			"--fields.profile-photo-url", "$profilePhotoUrl",
-			"--relationships.account", "{add: string, remove: string, replace: string}",
 		)
 	})
 

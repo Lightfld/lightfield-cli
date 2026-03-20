@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/Lightfld/lightfield-cli/internal/mocktest"
-	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestOpportunityCreate(t *testing.T) {
@@ -17,25 +16,6 @@ func TestOpportunityCreate(t *testing.T) {
 			"opportunity", "create",
 			"--fields", "{$name: $name, $stage: $stage}",
 			"--relationships", "{$account: string, $champion: string, $createdBy: string, $evaluator: string, $owner: string}",
-		)
-	})
-
-	t.Run("inner flags", func(t *testing.T) {
-		// Check that inner flags have been set up correctly
-		requestflag.CheckInnerFlags(opportunityCreate)
-
-		// Alternative argument passing style using inner flags
-		mocktest.TestRunMockTestWithFlags(
-			t,
-			"--api-key", "string",
-			"opportunity", "create",
-			"--fields.name", "$name",
-			"--fields.stage", "$stage",
-			"--relationships.account", "string",
-			"--relationships.champion", "string",
-			"--relationships.created-by", "string",
-			"--relationships.evaluator", "string",
-			"--relationships.owner", "string",
 		)
 	})
 
@@ -79,24 +59,6 @@ func TestOpportunityUpdate(t *testing.T) {
 			"--id", "id",
 			"--fields", "{$name: $name, $stage: $stage}",
 			"--relationships", "{$champion: {add: string, remove: string, replace: string}, $evaluator: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
-		)
-	})
-
-	t.Run("inner flags", func(t *testing.T) {
-		// Check that inner flags have been set up correctly
-		requestflag.CheckInnerFlags(opportunityUpdate)
-
-		// Alternative argument passing style using inner flags
-		mocktest.TestRunMockTestWithFlags(
-			t,
-			"--api-key", "string",
-			"opportunity", "update",
-			"--id", "id",
-			"--fields.name", "$name",
-			"--fields.stage", "$stage",
-			"--relationships.champion", "{add: string, remove: string, replace: string}",
-			"--relationships.evaluator", "{add: string, remove: string, replace: string}",
-			"--relationships.owner", "{add: string, remove: string, replace: string}",
 		)
 	})
 

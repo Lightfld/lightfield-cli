@@ -15,7 +15,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var contactCreate = requestflag.WithInnerFlags(cli.Command{
+var contactCreate = cli.Command{
 	Name:    "create",
 	Usage:   "Creates a new contact record.",
 	Suggest: true,
@@ -34,32 +34,7 @@ var contactCreate = requestflag.WithInnerFlags(cli.Command{
 	},
 	Action:          handleContactCreate,
 	HideHelpCommand: true,
-}, map[string][]requestflag.HasOuterFlag{
-	"fields": {
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.email",
-			Usage:      "List of email addresses for the contact (`EMAIL`, multi-value).",
-			InnerField: "$email",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.name",
-			Usage:      "The contact's name. Unlike other resources, this is an object: `{ firstName?: string, lastName?: string }`, not a plain string.",
-			InnerField: "$name",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.profile-photo-url",
-			Usage:      "URL of the contact's profile photo (`URL`).",
-			InnerField: "$profilePhotoUrl",
-		},
-	},
-	"relationships": {
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.account",
-			Usage:      "ID(s) of accounts to associate with this contact.",
-			InnerField: "$account",
-		},
-	},
-})
+}
 
 var contactRetrieve = cli.Command{
 	Name:    "retrieve",
@@ -76,7 +51,7 @@ var contactRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var contactUpdate = requestflag.WithInnerFlags(cli.Command{
+var contactUpdate = cli.Command{
 	Name:    "update",
 	Usage:   "Updates an existing contact by ID. Only included fields and relationships are\nmodified.",
 	Suggest: true,
@@ -99,32 +74,7 @@ var contactUpdate = requestflag.WithInnerFlags(cli.Command{
 	},
 	Action:          handleContactUpdate,
 	HideHelpCommand: true,
-}, map[string][]requestflag.HasOuterFlag{
-	"fields": {
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.email",
-			Usage:      "List of email addresses for the contact (`EMAIL`, multi-value).",
-			InnerField: "$email",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.name",
-			Usage:      "The contact's name. Unlike other resources, this is an object: `{ firstName?: string, lastName?: string }`, not a plain string.",
-			InnerField: "$name",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.profile-photo-url",
-			Usage:      "URL of the contact's profile photo (`URL`).",
-			InnerField: "$profilePhotoUrl",
-		},
-	},
-	"relationships": {
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.account",
-			Usage:      "Operation to modify associated accounts.",
-			InnerField: "$account",
-		},
-	},
-})
+}
 
 var contactList = cli.Command{
 	Name:    "list",

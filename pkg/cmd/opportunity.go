@@ -15,7 +15,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var opportunityCreate = requestflag.WithInnerFlags(cli.Command{
+var opportunityCreate = cli.Command{
 	Name:    "create",
 	Usage:   "Creates a new opportunity record. The `$name` and `$stage` fields and the\n`$account` relationship are required.",
 	Suggest: true,
@@ -35,47 +35,7 @@ var opportunityCreate = requestflag.WithInnerFlags(cli.Command{
 	},
 	Action:          handleOpportunityCreate,
 	HideHelpCommand: true,
-}, map[string][]requestflag.HasOuterFlag{
-	"fields": {
-		&requestflag.InnerFlag[string]{
-			Name:       "fields.name",
-			Usage:      "Display name of the opportunity.",
-			InnerField: "$name",
-		},
-		&requestflag.InnerFlag[string]{
-			Name:       "fields.stage",
-			Usage:      "Pipeline stage (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
-			InnerField: "$stage",
-		},
-	},
-	"relationships": {
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.account",
-			Usage:      "ID of the account this opportunity belongs to.",
-			InnerField: "$account",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.champion",
-			Usage:      "ID of the contact who is the internal champion.",
-			InnerField: "$champion",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.created-by",
-			Usage:      "ID of the user who created this opportunity.",
-			InnerField: "$createdBy",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.evaluator",
-			Usage:      "ID of the contact who is the evaluator.",
-			InnerField: "$evaluator",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.owner",
-			Usage:      "ID of the user who owns this opportunity.",
-			InnerField: "$owner",
-		},
-	},
-})
+}
 
 var opportunityRetrieve = cli.Command{
 	Name:    "retrieve",
@@ -92,7 +52,7 @@ var opportunityRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var opportunityUpdate = requestflag.WithInnerFlags(cli.Command{
+var opportunityUpdate = cli.Command{
 	Name:    "update",
 	Usage:   "Updates an existing opportunity by ID. Only included fields and relationships\nare modified.",
 	Suggest: true,
@@ -115,37 +75,7 @@ var opportunityUpdate = requestflag.WithInnerFlags(cli.Command{
 	},
 	Action:          handleOpportunityUpdate,
 	HideHelpCommand: true,
-}, map[string][]requestflag.HasOuterFlag{
-	"fields": {
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.name",
-			Usage:      "Display name of the opportunity.",
-			InnerField: "$name",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.stage",
-			Usage:      "Pipeline stage (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
-			InnerField: "$stage",
-		},
-	},
-	"relationships": {
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.champion",
-			Usage:      "Operation to modify the internal champion.",
-			InnerField: "$champion",
-		},
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.evaluator",
-			Usage:      "Operation to modify the evaluator.",
-			InnerField: "$evaluator",
-		},
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.owner",
-			Usage:      "Operation to modify the opportunity owner.",
-			InnerField: "$owner",
-		},
-	},
-})
+}
 
 var opportunityList = cli.Command{
 	Name:    "list",
