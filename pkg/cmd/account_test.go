@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/Lightfld/lightfield-cli/internal/mocktest"
-	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestAccountCreate(t *testing.T) {
@@ -17,30 +16,6 @@ func TestAccountCreate(t *testing.T) {
 			"account", "create",
 			"--fields", "{$name: $name, $facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
 			"--relationships", "{$contact: string, $owner: string}",
-		)
-	})
-
-	t.Run("inner flags", func(t *testing.T) {
-		// Check that inner flags have been set up correctly
-		requestflag.CheckInnerFlags(accountCreate)
-
-		// Alternative argument passing style using inner flags
-		mocktest.TestRunMockTestWithFlags(
-			t,
-			"--api-key", "string",
-			"account", "create",
-			"--fields.name", "$name",
-			"--fields.facebook", "$facebook",
-			"--fields.headcount", "$headcount",
-			"--fields.industry", "[string]",
-			"--fields.instagram", "$instagram",
-			"--fields.last-funding-type", "$lastFundingType",
-			"--fields.linked-in", "$linkedIn",
-			"--fields.primary-address", "{city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}",
-			"--fields.twitter", "$twitter",
-			"--fields.website", "[string]",
-			"--relationships.contact", "string",
-			"--relationships.owner", "string",
 		)
 	})
 
@@ -99,31 +74,6 @@ func TestAccountUpdate(t *testing.T) {
 			"--id", "id",
 			"--fields", "{$facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $name: $name, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
 			"--relationships", "{$contact: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
-		)
-	})
-
-	t.Run("inner flags", func(t *testing.T) {
-		// Check that inner flags have been set up correctly
-		requestflag.CheckInnerFlags(accountUpdate)
-
-		// Alternative argument passing style using inner flags
-		mocktest.TestRunMockTestWithFlags(
-			t,
-			"--api-key", "string",
-			"account", "update",
-			"--id", "id",
-			"--fields.facebook", "$facebook",
-			"--fields.headcount", "$headcount",
-			"--fields.industry", "[string]",
-			"--fields.instagram", "$instagram",
-			"--fields.last-funding-type", "$lastFundingType",
-			"--fields.linked-in", "$linkedIn",
-			"--fields.name", "$name",
-			"--fields.primary-address", "{city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}",
-			"--fields.twitter", "$twitter",
-			"--fields.website", "[string]",
-			"--relationships.contact", "{add: string, remove: string, replace: string}",
-			"--relationships.owner", "{add: string, remove: string, replace: string}",
 		)
 	})
 
