@@ -15,7 +15,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var accountCreate = requestflag.WithInnerFlags(cli.Command{
+var accountCreate = cli.Command{
 	Name:    "create",
 	Usage:   "Creates a new account record. The `$name` field is required.",
 	Suggest: true,
@@ -34,72 +34,7 @@ var accountCreate = requestflag.WithInnerFlags(cli.Command{
 	},
 	Action:          handleAccountCreate,
 	HideHelpCommand: true,
-}, map[string][]requestflag.HasOuterFlag{
-	"fields": {
-		&requestflag.InnerFlag[string]{
-			Name:       "fields.name",
-			Usage:      "Display name of the account.",
-			InnerField: "$name",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.facebook",
-			Usage:      "Facebook handle or profile identifier (`SOCIAL_HANDLE`).",
-			InnerField: "$facebook",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.headcount",
-			Usage:      "Employee count range (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
-			InnerField: "$headcount",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.industry",
-			Usage:      "Industries the account operates in (`MULTI_SELECT`). Pass option IDs or labels from the field definition.",
-			InnerField: "$industry",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.instagram",
-			Usage:      "Instagram handle or profile identifier (`SOCIAL_HANDLE`).",
-			InnerField: "$instagram",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.last-funding-type",
-			Usage:      "Most recent funding round type (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
-			InnerField: "$lastFundingType",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.linked-in",
-			Usage:      "LinkedIn handle or profile identifier (`SOCIAL_HANDLE`).",
-			InnerField: "$linkedIn",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.primary-address",
-			Usage:      "Primary address (`ADDRESS`).",
-			InnerField: "$primaryAddress",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.twitter",
-			Usage:      "Twitter/X handle (`SOCIAL_HANDLE`).",
-			InnerField: "$twitter",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.website",
-			Usage:      "Website URLs associated with the account (`URL`, multi-value).",
-			InnerField: "$website",
-		},
-	},
-	"relationships": {
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.contact",
-			Usage:      "ID(s) of contacts to associate with this account.",
-			InnerField: "$contact",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.owner",
-			Usage:      "ID of the user who owns this account.",
-			InnerField: "$owner",
-		},
-	},
-})
+}
 
 var accountRetrieve = cli.Command{
 	Name:    "retrieve",
@@ -116,7 +51,7 @@ var accountRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var accountUpdate = requestflag.WithInnerFlags(cli.Command{
+var accountUpdate = cli.Command{
 	Name:    "update",
 	Usage:   "Updates an existing account by ID. Only included fields and relationships are\nmodified.",
 	Suggest: true,
@@ -139,72 +74,7 @@ var accountUpdate = requestflag.WithInnerFlags(cli.Command{
 	},
 	Action:          handleAccountUpdate,
 	HideHelpCommand: true,
-}, map[string][]requestflag.HasOuterFlag{
-	"fields": {
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.facebook",
-			Usage:      "Facebook handle or profile identifier (`SOCIAL_HANDLE`).",
-			InnerField: "$facebook",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.headcount",
-			Usage:      "Employee count range (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
-			InnerField: "$headcount",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.industry",
-			Usage:      "Industries the account operates in (`MULTI_SELECT`). Pass option IDs or labels from the field definition.",
-			InnerField: "$industry",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.instagram",
-			Usage:      "Instagram handle or profile identifier (`SOCIAL_HANDLE`).",
-			InnerField: "$instagram",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.last-funding-type",
-			Usage:      "Most recent funding round type (`SINGLE_SELECT`). Pass the option ID or label from the field definition.",
-			InnerField: "$lastFundingType",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.linked-in",
-			Usage:      "LinkedIn handle or profile identifier (`SOCIAL_HANDLE`).",
-			InnerField: "$linkedIn",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.name",
-			Usage:      "Display name of the account.",
-			InnerField: "$name",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.primary-address",
-			Usage:      "Primary address (`ADDRESS`).",
-			InnerField: "$primaryAddress",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.twitter",
-			Usage:      "Twitter/X handle (`SOCIAL_HANDLE`).",
-			InnerField: "$twitter",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "fields.website",
-			Usage:      "Website URLs associated with the account (`URL`, multi-value).",
-			InnerField: "$website",
-		},
-	},
-	"relationships": {
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.contact",
-			Usage:      "Operation to modify associated contacts.",
-			InnerField: "$contact",
-		},
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.owner",
-			Usage:      "Operation to modify the account owner.",
-			InnerField: "$owner",
-		},
-	},
-})
+}
 
 var accountList = cli.Command{
 	Name:    "list",

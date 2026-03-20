@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.1 (2026-03-20)
+
+Full Changelog: [v0.3.0...v0.3.1](https://github.com/Lightfld/lightfield-cli/compare/v0.3.0...v0.3.1)
+
+### Bug Fixes
+
+* **api:** resolve system and custom attribute collision error ([a698bab](https://github.com/Lightfld/lightfield-cli/commit/a698babd7cf30f91aaa1e99412a5991fdc815e72))
+
+
+### Chores
+
+* remove custom code ([fda3047](https://github.com/Lightfld/lightfield-cli/commit/fda3047360436f3cf7f0c7c146564351f652aabc))
+
 ## 0.3.0 (2026-03-20)
 
 Full Changelog: [v0.2.0...v0.3.0](https://github.com/Lightfld/lightfield-cli/compare/v0.2.0...v0.3.0)
