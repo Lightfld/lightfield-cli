@@ -22,6 +22,7 @@ var memberRetrieve = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "id",
+			Usage:    "Unique identifier of the member to retrieve.",
 			Required: true,
 		},
 	},
@@ -36,10 +37,12 @@ var memberList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
 			Name:      "limit",
+			Usage:     "Maximum number of records to return. Defaults to 25, maximum 25.",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[int64]{
 			Name:      "offset",
+			Usage:     "Number of records to skip for pagination. Defaults to 0.",
 			QueryPath: "offset",
 		},
 	},
