@@ -83,7 +83,7 @@ var noteList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "Maximum number of records to return. Defaults to 25, maximum 100.",
+			Usage:     "Maximum number of records to return. Defaults to 25, maximum 25.",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[int64]{

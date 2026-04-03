@@ -140,6 +140,18 @@ func init() {
 				},
 			},
 			{
+				Name:     "task",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&taskCreate,
+					&taskRetrieve,
+					&taskUpdate,
+					&taskList,
+					&taskDefinitions,
+				},
+			},
+			{
 				Name:     "member",
 				Category: "API RESOURCE",
 				Suggest:  true,
