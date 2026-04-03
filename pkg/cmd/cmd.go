@@ -103,6 +103,31 @@ func init() {
 				},
 			},
 			{
+				Name:     "list",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&listCreate,
+					&listRetrieve,
+					&listUpdate,
+					&listList,
+					&listListAccounts,
+					&listListContacts,
+					&listListOpportunities,
+				},
+			},
+			{
+				Name:     "note",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&noteCreate,
+					&noteRetrieve,
+					&noteUpdate,
+					&noteList,
+				},
+			},
+			{
 				Name:     "opportunity",
 				Category: "API RESOURCE",
 				Suggest:  true,
