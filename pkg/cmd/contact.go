@@ -78,7 +78,7 @@ var contactUpdate = cli.Command{
 
 var contactList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of contacts. Use `offset` and `limit` to paginate\nthrough results. See <u>[List endpoints](/using-the-api/list-endpoints/)</u> for\nmore information about pagination.",
+	Usage:   "Returns a paginated list of contacts. Use `offset` and `limit` to paginate\nthrough results, and `$field` query parameters to filter. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout <u>[pagination](/using-the-api/list-endpoints/#pagination)</u> and\n<u>[filtering](/using-the-api/list-endpoints/#filtering)</u>.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
