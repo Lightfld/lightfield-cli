@@ -78,3 +78,19 @@ nfpms:
     contents:
       - src: man/man1/*.1.gz
         dst: /usr/share/man/man1/
+homebrew_casks:
+  - name: lightfield
+    repository:
+      owner: Lightfld
+      name: homebrew-lightfield
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://lightfield.app
+    description: The official CLI for Lightfield.
+    license: Apache-2.0
+    binary: "lightfield"
+    completions:
+      bash: "completions/lightfield.bash"
+      zsh: "completions/lightfield.zsh"
+      fish: "completions/lightfield.fish"
+    manpages:
+    - man/man1/lightfield.1.gz
