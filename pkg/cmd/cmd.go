@@ -117,6 +117,17 @@ func init() {
 				},
 			},
 			{
+				Name:     "meeting",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&meetingCreate,
+					&meetingRetrieve,
+					&meetingUpdate,
+					&meetingList,
+				},
+			},
+			{
 				Name:     "note",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -166,6 +177,19 @@ func init() {
 				Suggest:  true,
 				Commands: []*cli.Command{
 					&workflowRunStatus,
+				},
+			},
+			{
+				Name:     "file",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&fileCreate,
+					&fileRetrieve,
+					&fileList,
+					&fileCancel,
+					&fileComplete,
+					&fileURL,
 				},
 			},
 			{
