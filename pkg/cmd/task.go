@@ -136,8 +136,9 @@ func handleTaskCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "task create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "task create", obj, format, explicitFormat, transform)
 }
 
 func handleTaskRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -171,8 +172,9 @@ func handleTaskRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "task retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "task retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleTaskUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -213,8 +215,9 @@ func handleTaskUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "task update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "task update", obj, format, explicitFormat, transform)
 }
 
 func handleTaskList(ctx context.Context, cmd *cli.Command) error {
@@ -247,8 +250,9 @@ func handleTaskList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "task list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "task list", obj, format, explicitFormat, transform)
 }
 
 func handleTaskDefinitions(ctx context.Context, cmd *cli.Command) error {
@@ -279,6 +283,7 @@ func handleTaskDefinitions(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "task definitions", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "task definitions", obj, format, explicitFormat, transform)
 }

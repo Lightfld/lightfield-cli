@@ -135,8 +135,9 @@ func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "account create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "account create", obj, format, explicitFormat, transform)
 }
 
 func handleAccountRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -170,8 +171,9 @@ func handleAccountRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "account retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "account retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -212,8 +214,9 @@ func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "account update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "account update", obj, format, explicitFormat, transform)
 }
 
 func handleAccountList(ctx context.Context, cmd *cli.Command) error {
@@ -246,8 +249,9 @@ func handleAccountList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "account list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "account list", obj, format, explicitFormat, transform)
 }
 
 func handleAccountDefinitions(ctx context.Context, cmd *cli.Command) error {
@@ -278,6 +282,7 @@ func handleAccountDefinitions(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "account definitions", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "account definitions", obj, format, explicitFormat, transform)
 }

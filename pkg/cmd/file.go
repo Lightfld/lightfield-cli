@@ -167,8 +167,9 @@ func handleFileCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "file create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "file create", obj, format, explicitFormat, transform)
 }
 
 func handleFileRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -202,8 +203,9 @@ func handleFileRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "file retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "file retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleFileList(ctx context.Context, cmd *cli.Command) error {
@@ -236,8 +238,9 @@ func handleFileList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "file list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "file list", obj, format, explicitFormat, transform)
 }
 
 func handleFileCancel(ctx context.Context, cmd *cli.Command) error {
@@ -278,8 +281,9 @@ func handleFileCancel(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "file cancel", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "file cancel", obj, format, explicitFormat, transform)
 }
 
 func handleFileComplete(ctx context.Context, cmd *cli.Command) error {
@@ -320,8 +324,9 @@ func handleFileComplete(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "file complete", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "file complete", obj, format, explicitFormat, transform)
 }
 
 func handleFileURL(ctx context.Context, cmd *cli.Command) error {
@@ -355,6 +360,7 @@ func handleFileURL(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "file url", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "file url", obj, format, explicitFormat, transform)
 }

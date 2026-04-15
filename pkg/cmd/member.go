@@ -81,8 +81,9 @@ func handleMemberRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "member retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "member retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleMemberList(ctx context.Context, cmd *cli.Command) error {
@@ -115,6 +116,7 @@ func handleMemberList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "member list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "member list", obj, format, explicitFormat, transform)
 }
