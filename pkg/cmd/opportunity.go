@@ -136,8 +136,9 @@ func handleOpportunityCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "opportunity create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "opportunity create", obj, format, explicitFormat, transform)
 }
 
 func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -171,8 +172,9 @@ func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "opportunity retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "opportunity retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -213,8 +215,9 @@ func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "opportunity update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "opportunity update", obj, format, explicitFormat, transform)
 }
 
 func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
@@ -247,8 +250,9 @@ func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "opportunity list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "opportunity list", obj, format, explicitFormat, transform)
 }
 
 func handleOpportunityDefinitions(ctx context.Context, cmd *cli.Command) error {
@@ -279,6 +283,7 @@ func handleOpportunityDefinitions(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "opportunity definitions", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "opportunity definitions", obj, format, explicitFormat, transform)
 }

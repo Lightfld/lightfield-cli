@@ -135,8 +135,9 @@ func handleContactCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "contact create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "contact create", obj, format, explicitFormat, transform)
 }
 
 func handleContactRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -170,8 +171,9 @@ func handleContactRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "contact retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "contact retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -212,8 +214,9 @@ func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "contact update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "contact update", obj, format, explicitFormat, transform)
 }
 
 func handleContactList(ctx context.Context, cmd *cli.Command) error {
@@ -246,8 +249,9 @@ func handleContactList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "contact list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "contact list", obj, format, explicitFormat, transform)
 }
 
 func handleContactDefinitions(ctx context.Context, cmd *cli.Command) error {
@@ -278,6 +282,7 @@ func handleContactDefinitions(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "contact definitions", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "contact definitions", obj, format, explicitFormat, transform)
 }

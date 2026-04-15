@@ -126,8 +126,9 @@ func handleNoteCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "note create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "note create", obj, format, explicitFormat, transform)
 }
 
 func handleNoteRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -161,8 +162,9 @@ func handleNoteRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "note retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "note retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleNoteUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -203,8 +205,9 @@ func handleNoteUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "note update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "note update", obj, format, explicitFormat, transform)
 }
 
 func handleNoteList(ctx context.Context, cmd *cli.Command) error {
@@ -237,6 +240,7 @@ func handleNoteList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "note list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "note list", obj, format, explicitFormat, transform)
 }

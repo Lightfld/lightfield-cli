@@ -131,8 +131,9 @@ func handleMeetingCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "meeting create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "meeting create", obj, format, explicitFormat, transform)
 }
 
 func handleMeetingRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -166,8 +167,9 @@ func handleMeetingRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "meeting retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "meeting retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleMeetingUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -208,8 +210,9 @@ func handleMeetingUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "meeting update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "meeting update", obj, format, explicitFormat, transform)
 }
 
 func handleMeetingList(ctx context.Context, cmd *cli.Command) error {
@@ -242,6 +245,7 @@ func handleMeetingList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "meeting list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "meeting list", obj, format, explicitFormat, transform)
 }
