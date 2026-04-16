@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/Lightfld/lightfield-cli/internal/apiquery"
 	"github.com/Lightfld/lightfield-cli/internal/requestflag"
@@ -138,7 +137,12 @@ func handleOpportunityCreate(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "opportunity create", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "opportunity create",
+		Transform:      transform,
+	})
 }
 
 func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -174,7 +178,12 @@ func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "opportunity retrieve", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "opportunity retrieve",
+		Transform:      transform,
+	})
 }
 
 func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -217,7 +226,12 @@ func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "opportunity update", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "opportunity update",
+		Transform:      transform,
+	})
 }
 
 func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
@@ -252,7 +266,12 @@ func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "opportunity list", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "opportunity list",
+		Transform:      transform,
+	})
 }
 
 func handleOpportunityDefinitions(ctx context.Context, cmd *cli.Command) error {
@@ -285,5 +304,10 @@ func handleOpportunityDefinitions(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "opportunity definitions", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "opportunity definitions",
+		Transform:      transform,
+	})
 }

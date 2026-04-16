@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/Lightfld/lightfield-cli/internal/apiquery"
 	"github.com/Lightfld/lightfield-cli/internal/requestflag"
@@ -133,7 +132,12 @@ func handleMeetingCreate(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "meeting create", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "meeting create",
+		Transform:      transform,
+	})
 }
 
 func handleMeetingRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -169,7 +173,12 @@ func handleMeetingRetrieve(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "meeting retrieve", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "meeting retrieve",
+		Transform:      transform,
+	})
 }
 
 func handleMeetingUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -212,7 +221,12 @@ func handleMeetingUpdate(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "meeting update", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "meeting update",
+		Transform:      transform,
+	})
 }
 
 func handleMeetingList(ctx context.Context, cmd *cli.Command) error {
@@ -247,5 +261,10 @@ func handleMeetingList(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "meeting list", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "meeting list",
+		Transform:      transform,
+	})
 }
