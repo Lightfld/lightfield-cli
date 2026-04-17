@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Lightfld/lightfield-cli/internal/mocktest"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestTaskCreate(t *testing.T) {
@@ -15,6 +16,23 @@ func TestTaskCreate(t *testing.T) {
 			"--api-key", "string",
 			"task", "create",
 			"--fields", "{$status: $status, $title: $title, $description: $description, $dueAt: $dueAt}",
+			"--relationships", "{$assignedTo: string, $account: string, $createdBy: string, $opportunity: string}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(taskCreate)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"task", "create",
+			"--fields.status", "$status",
+			"--fields.title", "$title",
+			"--fields.description", "$description",
+			"--fields.due-at", "$dueAt",
 			"--relationships", "{$assignedTo: string, $account: string, $createdBy: string, $opportunity: string}",
 		)
 	})
@@ -59,6 +77,24 @@ func TestTaskUpdate(t *testing.T) {
 			"task", "update",
 			"--id", "id",
 			"--fields", "{$description: $description, $dueAt: $dueAt, $status: $status, $title: $title}",
+			"--relationships", "{$account: {add: string, remove: string, replace: string}, $assignedTo: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(taskUpdate)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"task", "update",
+			"--id", "id",
+			"--fields.description", "$description",
+			"--fields.due-at", "$dueAt",
+			"--fields.status", "$status",
+			"--fields.title", "$title",
 			"--relationships", "{$account: {add: string, remove: string, replace: string}, $assignedTo: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
 		)
 	})

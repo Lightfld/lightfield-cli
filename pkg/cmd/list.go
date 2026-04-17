@@ -14,7 +14,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var listCreate = cli.Command{
+var listCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
 	Usage:   "Creates a new list. The `$name` and `$objectType` fields are required.",
 	Suggest: true,
@@ -33,7 +33,20 @@ var listCreate = cli.Command{
 	},
 	Action:          handleListCreate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.name",
+			Usage:      "Display name of the list.",
+			InnerField: "$name",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.object-type",
+			Usage:      "The type of entities this list contains. One of `account`, `contact`, or `opportunity`.",
+			InnerField: "$objectType",
+		},
+	},
+})
 
 var listRetrieve = cli.Command{
 	Name:    "retrieve",
@@ -50,7 +63,7 @@ var listRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var listUpdate = cli.Command{
+var listUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Updates an existing list by ID. Only included fields are modified.",
 	Suggest: true,
@@ -73,7 +86,15 @@ var listUpdate = cli.Command{
 	},
 	Action:          handleListUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.name",
+			Usage:      "Display name of the list.",
+			InnerField: "$name",
+		},
+	},
+})
 
 var listList = cli.Command{
 	Name:    "list",
