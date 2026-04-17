@@ -14,7 +14,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var noteCreate = cli.Command{
+var noteCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
 	Usage:   "Creates a new note record.",
 	Suggest: true,
@@ -33,7 +33,32 @@ var noteCreate = cli.Command{
 	},
 	Action:          handleNoteCreate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.title",
+			Usage:      "Title of the note.",
+			InnerField: "$title",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.content",
+			Usage:      "Content of the note as markdown formatted text.",
+			InnerField: "$content",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.account",
+			Usage:      "ID(s) of accounts to associate with this note.",
+			InnerField: "$account",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.opportunity",
+			Usage:      "ID(s) of opportunities to associate with this note.",
+			InnerField: "$opportunity",
+		},
+	},
+})
 
 var noteRetrieve = cli.Command{
 	Name:    "retrieve",
@@ -50,7 +75,7 @@ var noteRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var noteUpdate = cli.Command{
+var noteUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Updates an existing note by ID. Only included fields and relationships are\nmodified.",
 	Suggest: true,
@@ -73,7 +98,32 @@ var noteUpdate = cli.Command{
 	},
 	Action:          handleNoteUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.content",
+			Usage:      "Content of the note as markdown formatted text.",
+			InnerField: "$content",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.title",
+			Usage:      "Title of the note.",
+			InnerField: "$title",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.account",
+			Usage:      "Operation to modify associated accounts.",
+			InnerField: "$account",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.opportunity",
+			Usage:      "Operation to modify associated opportunities.",
+			InnerField: "$opportunity",
+		},
+	},
+})
 
 var noteList = cli.Command{
 	Name:    "list",

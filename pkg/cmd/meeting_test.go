@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Lightfld/lightfield-cli/internal/mocktest"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestMeetingCreate(t *testing.T) {
@@ -17,6 +18,28 @@ func TestMeetingCreate(t *testing.T) {
 			"--fields", "{$endDate: $endDate, $startDate: $startDate, $title: $title, $attendeeEmails: [string], $description: $description, $meetingUrl: $meetingUrl, $organizerEmail: $organizerEmail, $privacySetting: FULL}",
 			"--auto-create-records=true",
 			"--relationships", "{$transcript: string}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(meetingCreate)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"meeting", "create",
+			"--fields.end-date", "$endDate",
+			"--fields.start-date", "$startDate",
+			"--fields.title", "$title",
+			"--fields.attendee-emails", "[string]",
+			"--fields.description", "$description",
+			"--fields.meeting-url", "$meetingUrl",
+			"--fields.organizer-email", "$organizerEmail",
+			"--fields.privacy-setting", "FULL",
+			"--auto-create-records=true",
+			"--relationships.transcript", "string",
 		)
 	})
 
@@ -64,6 +87,21 @@ func TestMeetingUpdate(t *testing.T) {
 			"--id", "id",
 			"--fields", "{$privacySetting: FULL}",
 			"--relationships", "{$transcript: {replace: replace}}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(meetingUpdate)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"meeting", "update",
+			"--id", "id",
+			"--fields.privacy-setting", "FULL",
+			"--relationships.transcript", "{replace: replace}",
 		)
 	})
 

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Lightfld/lightfield-cli/internal/mocktest"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestListCreate(t *testing.T) {
@@ -15,6 +16,21 @@ func TestListCreate(t *testing.T) {
 			"--api-key", "string",
 			"list", "create",
 			"--fields", "{$name: $name, $objectType: account}",
+			"--relationships", "{$accounts: string}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(listCreate)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"list", "create",
+			"--fields.name", "$name",
+			"--fields.object-type", "account",
 			"--relationships", "{$accounts: string}",
 		)
 	})
@@ -54,6 +70,21 @@ func TestListUpdate(t *testing.T) {
 			"list", "update",
 			"--id", "id",
 			"--fields", "{$name: $name}",
+			"--relationships", "{$accounts: {add: string, remove: string}}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(listUpdate)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"list", "update",
+			"--id", "id",
+			"--fields.name", "$name",
 			"--relationships", "{$accounts: {add: string, remove: string}}",
 		)
 	})

@@ -14,7 +14,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var meetingCreate = cli.Command{
+var meetingCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
 	Usage:   "Creates a new meeting record. This endpoint only supports creation of meetings\nin the past. The `$title`, `$startDate`, and `$endDate` fields are required.\nOnly the `$transcript` relationship is writable on create; all other meeting\nrelationships are system-managed. The response is privacy-aware and includes a\nread-only `accessLevel`. See\n<u>[Uploading meeting transcripts](/using-the-api/uploading-meeting-transcripts/)</u>\nfor the full file upload and transcript attachment flow.",
 	Suggest: true,
@@ -38,7 +38,57 @@ var meetingCreate = cli.Command{
 	},
 	Action:          handleMeetingCreate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.end-date",
+			Usage:      "The end time of the meeting in ISO 8601 format. Must be in the past.",
+			InnerField: "$endDate",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.start-date",
+			Usage:      "The start time of the meeting in ISO 8601 format. Must be in the past.",
+			InnerField: "$startDate",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.title",
+			Usage:      "The title of the meeting.",
+			InnerField: "$title",
+		},
+		&requestflag.InnerFlag[[]string]{
+			Name:       "fields.attendee-emails",
+			Usage:      "A list of attendee email addresses.",
+			InnerField: "$attendeeEmails",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.description",
+			Usage:      "A description of the meeting.",
+			InnerField: "$description",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.meeting-url",
+			Usage:      "The URL for the meeting.",
+			InnerField: "$meetingUrl",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.organizer-email",
+			Usage:      "The email address of the meeting organizer. This field accepts a single email address.",
+			InnerField: "$organizerEmail",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.privacy-setting",
+			Usage:      "The privacy setting for the meeting (`FULL` or `METADATA`).",
+			InnerField: "$privacySetting",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.transcript",
+			Usage:      "The ID of the file to attach as the meeting transcript when creating the meeting. Only one transcript can be attached to a meeting.",
+			InnerField: "$transcript",
+		},
+	},
+})
 
 var meetingRetrieve = cli.Command{
 	Name:    "retrieve",
@@ -55,7 +105,7 @@ var meetingRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var meetingUpdate = cli.Command{
+var meetingUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Updates an existing meeting by ID. Only included fields and relationships are\nmodified.",
 	Suggest: true,
@@ -78,7 +128,21 @@ var meetingUpdate = cli.Command{
 	},
 	Action:          handleMeetingUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.privacy-setting",
+			Usage:      "The privacy setting for the meeting.",
+			InnerField: "$privacySetting",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.transcript",
+			InnerField: "$transcript",
+		},
+	},
+})
 
 var meetingList = cli.Command{
 	Name:    "list",

@@ -14,14 +14,14 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var taskCreate = cli.Command{
+var taskCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
 	Usage:   "Creates a new task record. The `$title` and `$status` fields and the\n`$assignedTo` relationship are required.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values for the new task. System fields use a `$` prefix (e.g. `$title`, `$status`); custom attributes use their bare slug. Required: `$title` (string) and `$status` (one of `TODO`, `IN_PROGRESS`, `COMPLETE`, `CANCELLED`). Call the <u>[definitions endpoint](/api/resources/task/methods/definitions)</u> to discover available fields and options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values for the new task. Tasks only support the documented system fields, all prefixed with `$` (e.g. `$title`, `$status`). Required: `$title` (string) and `$status` (one of `TODO`, `IN_PROGRESS`, `COMPLETE`, `CANCELLED`). Call the <u>[definitions endpoint](/api/resources/task/methods/definitions)</u> to discover the available fields. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
 			Required: true,
 			BodyPath: "fields",
 		},
@@ -34,7 +34,30 @@ var taskCreate = cli.Command{
 	},
 	Action:          handleTaskCreate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.status",
+			Usage:      "Task status. One of: `TODO`, `IN_PROGRESS`, `COMPLETE`, `CANCELLED`.",
+			InnerField: "$status",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.title",
+			Usage:      "Title of the task.",
+			InnerField: "$title",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.description",
+			Usage:      "Description of the task in markdown format.",
+			InnerField: "$description",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.due-at",
+			Usage:      "Due date as an ISO 8601 datetime string.",
+			InnerField: "$dueAt",
+		},
+	},
+})
 
 var taskRetrieve = cli.Command{
 	Name:    "retrieve",
@@ -51,7 +74,7 @@ var taskRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var taskUpdate = cli.Command{
+var taskUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Updates an existing task by ID. Only included fields and relationships are\nmodified.",
 	Suggest: true,
@@ -63,7 +86,7 @@ var taskUpdate = cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$title`, `$status`); custom attributes use their bare slug. Call the <u>[definitions endpoint](/api/resources/task/methods/definitions)</u> for available fields. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. Tasks only support the documented system fields, all prefixed with `$` (e.g. `$title`, `$status`). Call the <u>[definitions endpoint](/api/resources/task/methods/definitions)</u> for available fields. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -74,7 +97,30 @@ var taskUpdate = cli.Command{
 	},
 	Action:          handleTaskUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.description",
+			Usage:      "Description of the task in markdown format.",
+			InnerField: "$description",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.due-at",
+			Usage:      "Due date as an ISO 8601 datetime string.",
+			InnerField: "$dueAt",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.status",
+			Usage:      "Task status. One of: `TODO`, `IN_PROGRESS`, `COMPLETE`, `CANCELLED`.",
+			InnerField: "$status",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.title",
+			Usage:      "Title of the task.",
+			InnerField: "$title",
+		},
+	},
+})
 
 var taskList = cli.Command{
 	Name:    "list",
@@ -98,7 +144,7 @@ var taskList = cli.Command{
 
 var taskDefinitions = cli.Command{
 	Name:            "definitions",
-	Usage:           "Returns the schema for all field and relationship definitions available on\ntasks, including both system-defined and custom fields. Useful for understanding\nthe shape of task data before creating or updating records. See\n<u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for\nmore details.",
+	Usage:           "Returns the schema for the field and relationship definitions available on\ntasks. Useful for understanding the shape of task data before creating or\nupdating records. See\n<u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for\nmore details.",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
 	Action:          handleTaskDefinitions,

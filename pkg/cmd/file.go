@@ -39,7 +39,7 @@ var fileCreate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "purpose",
-			Usage:    "Optional validation hint. When provided, the server enforces purpose-specific MIME type and file size constraints. Not persisted or returned in responses.",
+			Usage:    "Optional validation hint. When provided, the server enforces purpose-specific MIME type and file size constraints. Use `meeting_transcript` for files that will be attached to a meeting as its transcript. Use `knowledge_user` or `knowledge_workspace` to add the file to the authenticated user's or workspace's Knowledge, making it available to the AI assistant. Not persisted or returned in responses.",
 			BodyPath: "purpose",
 		},
 	},
