@@ -140,6 +140,7 @@ func handleOpportunityCreate(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "opportunity create",
 		Transform:      transform,
 	})
@@ -181,6 +182,7 @@ func handleOpportunityRetrieve(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "opportunity retrieve",
 		Transform:      transform,
 	})
@@ -229,6 +231,7 @@ func handleOpportunityUpdate(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "opportunity update",
 		Transform:      transform,
 	})
@@ -269,6 +272,7 @@ func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "opportunity list",
 		Transform:      transform,
 	})
@@ -307,6 +311,7 @@ func handleOpportunityDefinitions(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "opportunity definitions",
 		Transform:      transform,
 	})
