@@ -14,70 +14,120 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var accountCreate = cli.Command{
+var noteCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
-	Usage:   "Creates a new account record. The `$name` field is required.",
+	Usage:   "Creates a new note record.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values for the new account. System fields use a `$` prefix (e.g. `$name`, `$website`); custom attributes use their bare slug (e.g. `tier`, `renewalDate`). Required: `$name` (string). Fields of type `SINGLE_SELECT` or `MULTI_SELECT` accept either an option ID or label from the field's `typeConfiguration.options` — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> to discover available fields and options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values for the new note. `$title` is required; `$content` is optional. See **[Fields and relationships](/using-the-api/fields-and-relationships/)** for value type details.",
 			Required: true,
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationships to set on the new account. System relationships use a `$` prefix (e.g. `$owner`, `$contact`); custom relationships use their bare slug. Each value is a single entity ID or an array of IDs. Call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> to list available relationship keys.",
+			Usage:    "Relationships to set on the new note. System relationships use a `$` prefix (e.g. `$account`, `$opportunity`). Each value is a single entity ID or an array of IDs. The note author is automatically set to the API key owner.",
 			BodyPath: "relationships",
 		},
 	},
-	Action:          handleAccountCreate,
+	Action:          handleNoteCreate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.title",
+			Usage:      "Title of the note.",
+			InnerField: "$title",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.content",
+			Usage:      "Content of the note as markdown formatted text.",
+			InnerField: "$content",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.account",
+			Usage:      "ID(s) of accounts to associate with this note.",
+			InnerField: "$account",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.opportunity",
+			Usage:      "ID(s) of opportunities to associate with this note.",
+			InnerField: "$opportunity",
+		},
+	},
+})
 
-var accountRetrieve = cli.Command{
+var noteRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieves a single account by its ID.",
+	Usage:   "Retrieves a single note by its ID.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "id",
-			Usage:    "Unique identifier of the account to retrieve.",
+			Usage:    "Unique identifier of the note to retrieve.",
 			Required: true,
 		},
 	},
-	Action:          handleAccountRetrieve,
+	Action:          handleNoteRetrieve,
 	HideHelpCommand: true,
 }
 
-var accountUpdate = cli.Command{
+var noteUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Updates an existing account by ID. Only included fields and relationships are\nmodified.",
+	Usage:   "Updates an existing note by ID. Only included fields and relationships are\nmodified.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "id",
-			Usage:    "Unique identifier of the account to update.",
+			Usage:    "Unique identifier of the note to update.",
 			Required: true,
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$name`); custom attributes use their bare slug. `SINGLE_SELECT` and `MULTI_SELECT` fields accept an option ID or label — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> for available options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. See **[Fields and relationships](/using-the-api/fields-and-relationships/)** for value type details.",
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$owner`, `$contact`). Each value is an operation object with `add`, `remove`, or `replace`.",
+			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$account`, `$opportunity`). Each value is an operation object with `add` or `remove`.",
 			BodyPath: "relationships",
 		},
 	},
-	Action:          handleAccountUpdate,
+	Action:          handleNoteUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.content",
+			Usage:      "Content of the note as markdown formatted text.",
+			InnerField: "$content",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.title",
+			Usage:      "Title of the note.",
+			InnerField: "$title",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.account",
+			Usage:      "Operation to modify associated accounts.",
+			InnerField: "$account",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.opportunity",
+			Usage:      "Operation to modify associated opportunities.",
+			InnerField: "$opportunity",
+		},
+	},
+})
 
-var accountList = cli.Command{
+var noteList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of accounts. Use `offset` and `limit` to paginate\nthrough results, and `$field` query parameters to filter. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout <u>[pagination](/using-the-api/list-endpoints/#pagination)</u> and\n<u>[filtering](/using-the-api/list-endpoints/#filtering)</u>.",
+	Usage:   "Returns a paginated list of notes. Use `offset` and `limit` to paginate through\nresults. See <u>[List endpoints](/using-the-api/list-endpoints/)</u> for more\ninformation about pagination.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
@@ -91,20 +141,11 @@ var accountList = cli.Command{
 			QueryPath: "offset",
 		},
 	},
-	Action:          handleAccountList,
+	Action:          handleNoteList,
 	HideHelpCommand: true,
 }
 
-var accountDefinitions = cli.Command{
-	Name:            "definitions",
-	Usage:           "Returns the schema for all field and relationship definitions available on\naccounts, including both system-defined and custom fields. Useful for\nunderstanding the shape of account data before creating or updating records. See\n<u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for\nmore details.",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
-	Action:          handleAccountDefinitions,
-	HideHelpCommand: true,
-}
-
-func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
+func handleNoteCreate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -112,7 +153,7 @@ func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.AccountNewParams{}
+	params := githubcomlightfldlightfieldgo.NoteNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -127,7 +168,7 @@ func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.New(ctx, params, options...)
+	_, err = client.Note.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -140,12 +181,12 @@ func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account create",
+		Title:          "note create",
 		Transform:      transform,
 	})
 }
 
-func handleAccountRetrieve(ctx context.Context, cmd *cli.Command) error {
+func handleNoteRetrieve(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -169,7 +210,7 @@ func handleAccountRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.Note.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -182,12 +223,12 @@ func handleAccountRetrieve(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account retrieve",
+		Title:          "note retrieve",
 		Transform:      transform,
 	})
 }
 
-func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
+func handleNoteUpdate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -198,7 +239,7 @@ func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.AccountUpdateParams{}
+	params := githubcomlightfldlightfieldgo.NoteUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -213,7 +254,7 @@ func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.Update(
+	_, err = client.Note.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -231,12 +272,12 @@ func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account update",
+		Title:          "note update",
 		Transform:      transform,
 	})
 }
 
-func handleAccountList(ctx context.Context, cmd *cli.Command) error {
+func handleNoteList(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -244,7 +285,7 @@ func handleAccountList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.AccountListParams{}
+	params := githubcomlightfldlightfieldgo.NoteListParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -259,7 +300,7 @@ func handleAccountList(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.List(ctx, params, options...)
+	_, err = client.Note.List(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -272,46 +313,7 @@ func handleAccountList(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account list",
-		Transform:      transform,
-	})
-}
-
-func handleAccountDefinitions(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
-	unusedArgs := cmd.Args().Slice()
-
-	if len(unusedArgs) > 0 {
-		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
-	}
-
-	options, err := flagOptions(
-		cmd,
-		apiquery.NestedQueryFormatBrackets,
-		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
-		false,
-	)
-	if err != nil {
-		return err
-	}
-
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.Definitions(ctx, options...)
-	if err != nil {
-		return err
-	}
-
-	obj := gjson.ParseBytes(res)
-	format := cmd.Root().String("format")
-	explicitFormat := cmd.Root().IsSet("format")
-	transform := cmd.Root().String("transform")
-	return ShowJSON(obj, ShowJSONOpts{
-		ExplicitFormat: explicitFormat,
-		Format:         format,
-		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account definitions",
+		Title:          "note list",
 		Transform:      transform,
 	})
 }

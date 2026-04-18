@@ -39,6 +39,9 @@ func init() {
 				Name:        "base-url",
 				DefaultText: "url",
 				Usage:       "Override the base URL for API requests",
+				Validator: func(baseURL string) error {
+					return ValidateBaseURL(baseURL, "--base-url")
+				},
 			},
 			&cli.StringFlag{
 				Name:  "format",
@@ -70,6 +73,11 @@ func init() {
 				Name:  "transform-error",
 				Usage: "The GJSON transformation for errors.",
 			},
+			&cli.BoolFlag{
+				Name:    "raw-output",
+				Aliases: []string{"r"},
+				Usage:   "If the result is a string, print it without JSON quotes. This can be useful for making output transforms talk to non-JSON-based systems.",
+			},
 			&requestflag.Flag[string]{
 				Name: "api-key",
 			},
@@ -100,6 +108,42 @@ func init() {
 				},
 			},
 			{
+				Name:     "list",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&listCreate,
+					&listRetrieve,
+					&listUpdate,
+					&listList,
+					&listListAccounts,
+					&listListContacts,
+					&listListOpportunities,
+				},
+			},
+			{
+				Name:     "meeting",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&meetingCreate,
+					&meetingRetrieve,
+					&meetingUpdate,
+					&meetingList,
+				},
+			},
+			{
+				Name:     "note",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&noteCreate,
+					&noteRetrieve,
+					&noteUpdate,
+					&noteList,
+				},
+			},
+			{
 				Name:     "opportunity",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -109,6 +153,18 @@ func init() {
 					&opportunityUpdate,
 					&opportunityList,
 					&opportunityDefinitions,
+				},
+			},
+			{
+				Name:     "task",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&taskCreate,
+					&taskRetrieve,
+					&taskUpdate,
+					&taskList,
+					&taskDefinitions,
 				},
 			},
 			{
@@ -126,6 +182,19 @@ func init() {
 				Suggest:  true,
 				Commands: []*cli.Command{
 					&workflowRunStatus,
+				},
+			},
+			{
+				Name:     "file",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&fileCreate,
+					&fileRetrieve,
+					&fileList,
+					&fileCancel,
+					&fileComplete,
+					&fileURL,
 				},
 			},
 			{

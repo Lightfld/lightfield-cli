@@ -14,8 +14,8 @@ func TestContactCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"contact", "create",
-			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
-			"--relationships", "{$account: string}",
+			"--fields", "{foo: string}",
+			"--relationships", "{foo: string}",
 		)
 	})
 
@@ -23,14 +23,9 @@ func TestContactCreate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  $email:\n" +
-			"    - string\n" +
-			"  $name:\n" +
-			"    firstName: firstName\n" +
-			"    lastName: lastName\n" +
-			"  $profilePhotoUrl: $profilePhotoUrl\n" +
+			"  foo: string\n" +
 			"relationships:\n" +
-			"  $account: string\n")
+			"  foo: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -57,8 +52,8 @@ func TestContactUpdate(t *testing.T) {
 			"--api-key", "string",
 			"contact", "update",
 			"--id", "id",
-			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
-			"--relationships", "{$account: {add: string, remove: string, replace: string}}",
+			"--fields", "{foo: string}",
+			"--relationships", "{foo: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -66,14 +61,9 @@ func TestContactUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  $email:\n" +
-			"    - string\n" +
-			"  $name:\n" +
-			"    firstName: firstName\n" +
-			"    lastName: lastName\n" +
-			"  $profilePhotoUrl: $profilePhotoUrl\n" +
+			"  foo: string\n" +
 			"relationships:\n" +
-			"  $account:\n" +
+			"  foo:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n")

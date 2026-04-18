@@ -14,8 +14,8 @@ func TestOpportunityCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"opportunity", "create",
-			"--fields", "{$name: $name, $stage: $stage}",
-			"--relationships", "{$account: string, $champion: string, $createdBy: string, $evaluator: string, $owner: string}",
+			"--fields", "{foo: string}",
+			"--relationships", "{foo: string}",
 		)
 	})
 
@@ -23,14 +23,9 @@ func TestOpportunityCreate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  $name: $name\n" +
-			"  $stage: $stage\n" +
+			"  foo: string\n" +
 			"relationships:\n" +
-			"  $account: string\n" +
-			"  $champion: string\n" +
-			"  $createdBy: string\n" +
-			"  $evaluator: string\n" +
-			"  $owner: string\n")
+			"  foo: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -57,8 +52,8 @@ func TestOpportunityUpdate(t *testing.T) {
 			"--api-key", "string",
 			"opportunity", "update",
 			"--id", "id",
-			"--fields", "{$name: $name, $stage: $stage}",
-			"--relationships", "{$champion: {add: string, remove: string, replace: string}, $evaluator: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
+			"--fields", "{foo: string}",
+			"--relationships", "{foo: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -66,18 +61,9 @@ func TestOpportunityUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  $name: $name\n" +
-			"  $stage: $stage\n" +
+			"  foo: string\n" +
 			"relationships:\n" +
-			"  $champion:\n" +
-			"    add: string\n" +
-			"    remove: string\n" +
-			"    replace: string\n" +
-			"  $evaluator:\n" +
-			"    add: string\n" +
-			"    remove: string\n" +
-			"    replace: string\n" +
-			"  $owner:\n" +
+			"  foo:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n")

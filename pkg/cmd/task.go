@@ -14,70 +14,117 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var accountCreate = cli.Command{
+var taskCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
-	Usage:   "Creates a new account record. The `$name` field is required.",
+	Usage:   "Creates a new task record. The `$title` and `$status` fields and the\n`$assignedTo` relationship are required.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values for the new account. System fields use a `$` prefix (e.g. `$name`, `$website`); custom attributes use their bare slug (e.g. `tier`, `renewalDate`). Required: `$name` (string). Fields of type `SINGLE_SELECT` or `MULTI_SELECT` accept either an option ID or label from the field's `typeConfiguration.options` — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> to discover available fields and options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values for the new task. Tasks only support the documented system fields, all prefixed with `$` (e.g. `$title`, `$status`). Required: `$title` (string) and `$status` (one of `TODO`, `IN_PROGRESS`, `COMPLETE`, `CANCELLED`). Call the <u>[definitions endpoint](/api/resources/task/methods/definitions)</u> to discover the available fields. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
 			Required: true,
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationships to set on the new account. System relationships use a `$` prefix (e.g. `$owner`, `$contact`); custom relationships use their bare slug. Each value is a single entity ID or an array of IDs. Call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> to list available relationship keys.",
+			Usage:    "Relationships to set on the new task. System relationships use a `$` prefix (e.g. `$account`, `$assignedTo`); custom relationships use their bare slug. `$assignedTo` is required. Each value is a single entity ID or an array of IDs. Call the <u>[definitions endpoint](/api/resources/task/methods/definitions)</u> to list available relationship keys.",
+			Required: true,
 			BodyPath: "relationships",
 		},
 	},
-	Action:          handleAccountCreate,
+	Action:          handleTaskCreate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.status",
+			Usage:      "Task status. One of: `TODO`, `IN_PROGRESS`, `COMPLETE`, `CANCELLED`.",
+			InnerField: "$status",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "fields.title",
+			Usage:      "Title of the task.",
+			InnerField: "$title",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.description",
+			Usage:      "Description of the task in markdown format.",
+			InnerField: "$description",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.due-at",
+			Usage:      "Due date as an ISO 8601 datetime string.",
+			InnerField: "$dueAt",
+		},
+	},
+})
 
-var accountRetrieve = cli.Command{
+var taskRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieves a single account by its ID.",
+	Usage:   "Retrieves a single task by its ID.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "id",
-			Usage:    "Unique identifier of the account to retrieve.",
+			Usage:    "Unique identifier of the task to retrieve.",
 			Required: true,
 		},
 	},
-	Action:          handleAccountRetrieve,
+	Action:          handleTaskRetrieve,
 	HideHelpCommand: true,
 }
 
-var accountUpdate = cli.Command{
+var taskUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Updates an existing account by ID. Only included fields and relationships are\nmodified.",
+	Usage:   "Updates an existing task by ID. Only included fields and relationships are\nmodified.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "id",
-			Usage:    "Unique identifier of the account to update.",
+			Usage:    "Unique identifier of the task to update.",
 			Required: true,
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$name`); custom attributes use their bare slug. `SINGLE_SELECT` and `MULTI_SELECT` fields accept an option ID or label — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> for available options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. Tasks only support the documented system fields, all prefixed with `$` (e.g. `$title`, `$status`). Call the <u>[definitions endpoint](/api/resources/task/methods/definitions)</u> for available fields. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$owner`, `$contact`). Each value is an operation object with `add`, `remove`, or `replace`.",
+			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$account`, `$assignedTo`). Each value is an operation object with `add`, `remove`, or `replace`.",
 			BodyPath: "relationships",
 		},
 	},
-	Action:          handleAccountUpdate,
+	Action:          handleTaskUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"fields": {
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.description",
+			Usage:      "Description of the task in markdown format.",
+			InnerField: "$description",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.due-at",
+			Usage:      "Due date as an ISO 8601 datetime string.",
+			InnerField: "$dueAt",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.status",
+			Usage:      "Task status. One of: `TODO`, `IN_PROGRESS`, `COMPLETE`, `CANCELLED`.",
+			InnerField: "$status",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "fields.title",
+			Usage:      "Title of the task.",
+			InnerField: "$title",
+		},
+	},
+})
 
-var accountList = cli.Command{
+var taskList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of accounts. Use `offset` and `limit` to paginate\nthrough results, and `$field` query parameters to filter. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout <u>[pagination](/using-the-api/list-endpoints/#pagination)</u> and\n<u>[filtering](/using-the-api/list-endpoints/#filtering)</u>.",
+	Usage:   "Returns a paginated list of tasks. Use `offset` and `limit` to paginate through\nresults. See <u>[List endpoints](/using-the-api/list-endpoints/)</u> for more\ninformation about pagination.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
@@ -91,20 +138,20 @@ var accountList = cli.Command{
 			QueryPath: "offset",
 		},
 	},
-	Action:          handleAccountList,
+	Action:          handleTaskList,
 	HideHelpCommand: true,
 }
 
-var accountDefinitions = cli.Command{
+var taskDefinitions = cli.Command{
 	Name:            "definitions",
-	Usage:           "Returns the schema for all field and relationship definitions available on\naccounts, including both system-defined and custom fields. Useful for\nunderstanding the shape of account data before creating or updating records. See\n<u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for\nmore details.",
+	Usage:           "Returns the schema for the field and relationship definitions available on\ntasks. Useful for understanding the shape of task data before creating or\nupdating records. See\n<u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for\nmore details.",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleAccountDefinitions,
+	Action:          handleTaskDefinitions,
 	HideHelpCommand: true,
 }
 
-func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
+func handleTaskCreate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -112,7 +159,7 @@ func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.AccountNewParams{}
+	params := githubcomlightfldlightfieldgo.TaskNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -127,7 +174,7 @@ func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.New(ctx, params, options...)
+	_, err = client.Task.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -140,12 +187,12 @@ func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account create",
+		Title:          "task create",
 		Transform:      transform,
 	})
 }
 
-func handleAccountRetrieve(ctx context.Context, cmd *cli.Command) error {
+func handleTaskRetrieve(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -169,7 +216,7 @@ func handleAccountRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.Task.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -182,12 +229,12 @@ func handleAccountRetrieve(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account retrieve",
+		Title:          "task retrieve",
 		Transform:      transform,
 	})
 }
 
-func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
+func handleTaskUpdate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -198,7 +245,7 @@ func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.AccountUpdateParams{}
+	params := githubcomlightfldlightfieldgo.TaskUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -213,7 +260,7 @@ func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.Update(
+	_, err = client.Task.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -231,12 +278,12 @@ func handleAccountUpdate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account update",
+		Title:          "task update",
 		Transform:      transform,
 	})
 }
 
-func handleAccountList(ctx context.Context, cmd *cli.Command) error {
+func handleTaskList(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -244,7 +291,7 @@ func handleAccountList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.AccountListParams{}
+	params := githubcomlightfldlightfieldgo.TaskListParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -259,7 +306,7 @@ func handleAccountList(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.List(ctx, params, options...)
+	_, err = client.Task.List(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -272,12 +319,12 @@ func handleAccountList(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account list",
+		Title:          "task list",
 		Transform:      transform,
 	})
 }
 
-func handleAccountDefinitions(ctx context.Context, cmd *cli.Command) error {
+func handleTaskDefinitions(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -298,7 +345,7 @@ func handleAccountDefinitions(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Account.Definitions(ctx, options...)
+	_, err = client.Task.Definitions(ctx, options...)
 	if err != nil {
 		return err
 	}
@@ -311,7 +358,7 @@ func handleAccountDefinitions(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "account definitions",
+		Title:          "task definitions",
 		Transform:      transform,
 	})
 }

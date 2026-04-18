@@ -8,6 +8,12 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
+### Installing with Homebrew
+
+```sh
+brew install Lightfld/lightfield/lightfield
+```
+
 ### Installing with Go
 
 To test or install the CLI locally, you need [Go](https://go.dev/doc/install) version 1.22 or later installed.
@@ -50,7 +56,7 @@ lightfield [resource] <command> [flags...]
 ```sh
 lightfield account create \
   --api-key 'My API Key' \
-  --fields '{$name: Acme Corp}'
+  --fields '{$name: Acme Corp, $industry: [opt_01j0x6q3m9v2p4t7k8n5r1s2u]}'
 ```
 
 For details about specific commands, use the `--help` flag.
@@ -106,3 +112,23 @@ base64-encoding). Note that absolute paths will begin with `@file://` or
 ```bash
 lightfield <command> --arg @data://file.txt
 ```
+
+## Linking different Go SDK versions
+
+You can link the CLI against a different version of the Lightfield Go SDK
+for development purposes using the `./scripts/link` script.
+
+To link to a specific version from a repository (version can be a branch,
+git tag, or commit hash):
+
+```bash
+./scripts/link github.com/org/repo@version
+```
+
+To link to a local copy of the SDK:
+
+```bash
+./scripts/link ../path/to/githubcomlightfldlightfieldgo-go
+```
+
+If you run the link script without any arguments, it will default to `../githubcomlightfldlightfieldgo-go`.
