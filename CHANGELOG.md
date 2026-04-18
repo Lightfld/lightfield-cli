@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.1 (2026-04-18)
+
+Full Changelog: [v0.4.0...v0.4.1](https://github.com/Lightfld/lightfield-cli/compare/v0.4.0...v0.4.1)
+
+### Chores
+
+* **cli:** use `ShowJSONOpts` as argument to `formatJSON` instead of many positionals ([9542c8b](https://github.com/Lightfld/lightfield-cli/commit/9542c8b7a5e29d548e4a367e25342df88a6fbc42))
+* **tests:** bump steady to v0.22.1 ([5286841](https://github.com/Lightfld/lightfield-cli/commit/5286841589f34df391c6e750e47f7c1583ecf2d0))
+
 ## 0.4.0 (2026-04-18)
 
 Full Changelog: [v0.3.1...v0.4.0](https://github.com/Lightfld/lightfield-cli/compare/v0.3.1...v0.4.0)
