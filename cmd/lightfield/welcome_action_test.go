@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestShouldShowWelcomeHonorsEnvironmentOptOuts(t *testing.T) {
+func TestShouldShowWelcome(t *testing.T) {
 	stdin, err := os.Open(os.DevNull)
 	if err != nil {
 		t.Fatalf("open stdin stub: %v", err)
@@ -18,20 +18,21 @@ func TestShouldShowWelcomeHonorsEnvironmentOptOuts(t *testing.T) {
 	}
 	defer stdout.Close()
 
-	t.Setenv("CI", "true")
-	if shouldShowWelcome(stdin, stdout) {
-		t.Fatal("expected welcome to be disabled in CI")
-	}
-
-	t.Setenv("CI", "")
-	t.Setenv("LIGHTFIELD_NO_WELCOME", "1")
-	if shouldShowWelcome(stdin, stdout) {
-		t.Fatal("expected welcome to be disabled when opted out")
-	}
-
-	t.Setenv("LIGHTFIELD_NO_WELCOME", "")
-	t.Setenv("TERM", "dumb")
-	if shouldShowWelcome(stdin, stdout) {
-		t.Fatal("expected welcome to be disabled for dumb terminals")
+	for _, tc := range []struct {
+		name string
+		env  map[string]string
+	}{
+		{"CI set", map[string]string{"CI": "true"}},
+		{"opt-out env var", map[string]string{"LIGHTFIELD_NO_WELCOME": "1"}},
+		{"dumb terminal", map[string]string{"TERM": "dumb"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			for k, v := range tc.env {
+				t.Setenv(k, v)
+			}
+			if shouldShowWelcome(stdin, stdout) {
+				t.Errorf("expected welcome to be disabled when %s", tc.name)
+			}
+		})
 	}
 }
