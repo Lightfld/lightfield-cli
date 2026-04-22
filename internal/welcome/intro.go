@@ -18,11 +18,19 @@ const (
 	tickInterval    = 180 * time.Millisecond
 	maxDecorRows    = 6
 	frameWrap       = 10000
-	phaseRate       = 0.42
-	waveSpatialFreq = 0.45
-	perRayPhaseOff  = 0.22
-	fadeStart       = 0.18
-	fadeRange       = 0.15
+	phaseRate       = 0.35
+	waveSpatialFreq = 0.28
+	perRayPhaseOff  = 0.10
+	fadeStart       = 0.08
+	fadeRange       = 0.22
+
+	centerDeadZone   = 0.45
+	toleranceBase    = 0.85
+	toleranceGrowth  = 0.12
+	slopeVertical    = 0.1
+	waveThreshAccent = 0.78
+	waveThreshMid    = 0.48
+	waveThreshFaint  = 0.12
 )
 
 // rayBrightness indexes into the pre-rendered ray character table.
@@ -83,8 +91,8 @@ func newCardStyles() cardStyles {
 
 	return cardStyles{
 		border:        lipgloss.Color("#343434"),
-		eyebrow:       lipgloss.NewStyle().Foreground(tertiary).Bold(true),
-		hero:          lipgloss.NewStyle().Bold(true).Foreground(primary),
+		eyebrow:       lipgloss.NewStyle().Foreground(primary).Bold(true),
+		hero:          lipgloss.NewStyle().Foreground(secondary),
 		body:          lipgloss.NewStyle().Foreground(secondary),
 		muted:         lipgloss.NewStyle().Foreground(tertiary),
 		link:          lipgloss.NewStyle().Foreground(secondary),
@@ -141,17 +149,17 @@ type Model struct {
 func NewModel(version string) Model {
 	s := newCardStyles()
 
-	heroText := "Lightfield"
+	eyebrowText := "Lightfield CLI"
 	if version != "" {
-		heroText += " v" + version
+		eyebrowText += " v" + version
 	}
 
 	return Model{
 		version: version,
 		styles:  s,
 		heroLines: []heroContentLine{
-			{text: "LIGHTFIELD CLI", style: s.eyebrow},
-			{text: heroText, style: s.hero},
+			{text: eyebrowText, style: s.eyebrow},
+			{text: "The agent-native CRM platform.", style: s.hero},
 		},
 	}
 }
@@ -261,7 +269,7 @@ func cardWidth(width int) int {
 
 	usable := width - 6
 	if usable < minWidth {
-		return minWidth
+		return min(minWidth, width)
 	}
 	if usable < defaultWidth {
 		return usable
@@ -304,11 +312,13 @@ func linkRow(labelStyle, linkStyle lipgloss.Style, id, label, url string) string
 }
 
 // sanitizeOSC8 strips characters that could break an OSC 8 escape sequence:
-// ESC (0x1B), BEL (0x07), newlines, and the semicolon field separator.
+// ESC (0x1B), BEL (0x07), newlines, and the semicolon field separator
+// (';' delimits the id/params and URI fields — an injected ';' in the id
+// could prematurely terminate that field).
 func sanitizeOSC8(s string) string {
 	return strings.Map(func(r rune) rune {
 		switch r {
-		case '\x1b', '\x07', '\n', '\r':
+		case '\x1b', '\x07', '\n', '\r', ';':
 			return -1
 		default:
 			return r
@@ -383,6 +393,17 @@ func writeHeroLine(buf *strings.Builder, width, totalRows, row int, fp framePara
 	const gap = 3
 
 	textWidth := lipgloss.Width(line.text)
+
+	// On very narrow terminals, truncate the text to fit within width.
+	if textWidth+gap*2 > width {
+		visibleChars := max(width-gap*2, 0)
+		runes := []rune(line.text)
+		if visibleChars < len(runes) {
+			line = heroContentLine{text: string(runes[:visibleChars]), style: line.style}
+			textWidth = visibleChars
+		}
+	}
+
 	sideTotal := max(width-textWidth-gap*2, 0)
 	leftWidth := sideTotal / 2
 	rightWidth := sideTotal - leftWidth
@@ -410,19 +431,20 @@ func writeRayRow(buf *strings.Builder, width, totalRows, row int, fp frameParams
 }
 
 // raySlopes defines the set of light rays radiating from the hero text.
-// Wider-angle slopes ensure rays reach the box edges even at moderate row counts.
-var raySlopes = []float64{0.0, 0.4, 0.9, 1.6, 2.8, 4.5, 7.5}
+// Dense slope set creates a filled cross pattern rather than sparse individual rays.
+// Declared as an array (not slice) to prevent accidental mutation.
+var raySlopes = [13]float64{0.0, 0.2, 0.45, 0.7, 1.0, 1.35, 1.8, 2.4, 3.2, 4.2, 5.5, 7.0, 9.0}
 
 func renderRayCell(width, totalRows, x, row int, fp frameParams, rc [3][3]string) string {
 	dc := float64(x) - fp.cx
 	dr := float64(row) - fp.cy
 	absDr := math.Abs(dr)
 
-	if absDr < 0.45 {
+	if absDr < centerDeadZone {
 		return " "
 	}
 
-	tolerance := 0.55 + absDr*0.06
+	tolerance := toleranceBase + absDr*toleranceGrowth
 
 	bestIdx := -1
 	bestResidual := tolerance
@@ -452,7 +474,7 @@ func renderRayCell(width, totalRows, x, row int, fp frameParams, rc [3][3]string
 
 	var ci rayChar
 	switch {
-	case raySlopes[bestIdx] < 0.1:
+	case raySlopes[bestIdx] < slopeVertical:
 		ci = rayVert
 	case dr*dc >= 0:
 		ci = rayBack
@@ -461,11 +483,11 @@ func renderRayCell(width, totalRows, x, row int, fp frameParams, rc [3][3]string
 	}
 
 	switch {
-	case wave > 0.82:
+	case wave > waveThreshAccent:
 		return rc[rayAccent][ci]
-	case wave > 0.55:
+	case wave > waveThreshMid:
 		return rc[rayMid][ci]
-	case wave > 0.22:
+	case wave > waveThreshFaint:
 		return rc[rayFaint][ci]
 	default:
 		return " "

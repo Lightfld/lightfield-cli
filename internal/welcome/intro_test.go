@@ -3,13 +3,15 @@ package welcome
 import (
 	"strings"
 	"testing"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func BenchmarkRenderCard(b *testing.B) {
 	s := newCardStyles()
 	heroLines := []heroContentLine{
-		{text: "LIGHTFIELD CLI", style: s.eyebrow},
-		{text: "Lightfield v0.4.1", style: s.hero},
+		{text: "Lightfield CLI v0.4.1", style: s.eyebrow},
+		{text: "The agent-native CRM platform.", style: s.hero},
 	}
 	m := Model{
 		width:   100,
@@ -38,8 +40,8 @@ func BenchmarkRenderRayCell(b *testing.B) {
 func TestRenderCardIncludesExpectedContent(t *testing.T) {
 	s := newCardStyles()
 	heroLines := []heroContentLine{
-		{text: "LIGHTFIELD CLI", style: s.eyebrow},
-		{text: "Lightfield v0.4.1", style: s.hero},
+		{text: "Lightfield CLI v0.4.1", style: s.eyebrow},
+		{text: "The agent-native CRM platform.", style: s.hero},
 	}
 	m := Model{
 		width:     100,
@@ -56,9 +58,8 @@ func TestRenderCardIncludesExpectedContent(t *testing.T) {
 		name string
 		want string
 	}{
-		{"eyebrow", "LIGHTFIELD CLI"},
-		{"product name", "Lightfield"},
-		{"version", "v0.4.1"},
+		{"eyebrow with version", "Lightfield CLI v0.4.1"},
+		{"tagline", "agent-native CRM platform"},
 		{"section header", "Start here"},
 		{"step 1 command", `export LIGHTFIELD_API_KEY="sk_lf_..."`},
 		{"step 2 command", `lightfield account list --api-key "$LIGHTFIELD_API_KEY" --limit 1`},
@@ -82,7 +83,8 @@ func TestCardWidth(t *testing.T) {
 		wantWidth int
 	}{
 		{"zero defaults to 92", 0, 92},
-		{"narrow clamps to min 72", 70, 72},
+		{"narrow clamps to terminal", 70, 70},
+		{"very narrow clamps to terminal width", 40, 40},
 		{"medium constrained by terminal", 80, 74},
 		{"wide caps at default 92", 200, 92},
 	} {
@@ -101,9 +103,10 @@ func TestSanitizeOSC8(t *testing.T) {
 		want  string
 	}{
 		{"clean URL passes through", "https://example.com/path", "https://example.com/path"},
-		{"strips ESC", "https://evil\x1b]8;;hack\x1b\\", "https://evil]8;;hack\\"},
+		{"strips ESC", "https://evil\x1bsite", "https://evilsite"},
 		{"strips BEL", "https://evil\x07site", "https://evilsite"},
 		{"strips newlines", "https://evil\n\rsite", "https://evilsite"},
+		{"strips semicolons", "id;inject;extra", "idinjectextra"},
 		{"empty string", "", ""},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -111,6 +114,102 @@ func TestSanitizeOSC8(t *testing.T) {
 				t.Errorf("sanitizeOSC8(%q) = %q, want %q", tc.input, got, tc.want)
 			}
 		})
+	}
+}
+
+func TestModelUpdate_KeyQuit(t *testing.T) {
+	m := NewModel("1.0.0")
+	m.width = 100
+	m.height = 50
+	m.recalcLayout()
+
+	keys := []struct {
+		name string
+		msg  tea.KeyMsg
+	}{
+		{"enter", tea.KeyMsg(tea.Key{Type: tea.KeyEnter})},
+		{"esc", tea.KeyMsg(tea.Key{Type: tea.KeyEsc})},
+		{"q", tea.KeyMsg(tea.Key{Type: tea.KeyRunes, Runes: []rune{'q'}})},
+		{"ctrl+c", tea.KeyMsg(tea.Key{Type: tea.KeyCtrlC})},
+	}
+
+	for _, tc := range keys {
+		t.Run(tc.name, func(t *testing.T) {
+			_, cmd := m.Update(tc.msg)
+			if cmd == nil {
+				t.Fatalf("expected a command for key %q", tc.name)
+			}
+			msg := cmd()
+			if _, ok := msg.(tea.QuitMsg); !ok {
+				t.Errorf("key %q: expected tea.QuitMsg, got %T", tc.name, msg)
+			}
+		})
+	}
+}
+
+func TestModelUpdate_Resize(t *testing.T) {
+	m := NewModel("1.0.0")
+
+	updated, cmd := m.Update(tea.WindowSizeMsg{Width: 120, Height: 40})
+	model := updated.(Model)
+
+	if model.width != 120 || model.height != 40 {
+		t.Errorf("resize: got %dx%d, want 120x40", model.width, model.height)
+	}
+	if model.innerWidth == 0 {
+		t.Error("resize: innerWidth was not recomputed")
+	}
+	if model.staticCard == "" {
+		t.Error("resize: staticCard was not recomputed")
+	}
+	if cmd == nil {
+		t.Error("resize: expected ClearScreen command")
+	}
+}
+
+func TestModelUpdate_Pulse(t *testing.T) {
+	m := NewModel("1.0.0")
+	m.width = 100
+	m.height = 50
+	m.frame = 0
+
+	updated, cmd := m.Update(pulseMsg{})
+	model := updated.(Model)
+
+	if model.frame != 1 {
+		t.Errorf("pulse: frame = %d, want 1", model.frame)
+	}
+	if cmd == nil {
+		t.Error("pulse: expected tickPulse command")
+	}
+}
+
+func TestModelUpdate_PulseWraps(t *testing.T) {
+	m := NewModel("1.0.0")
+	m.frame = frameWrap - 1
+
+	updated, _ := m.Update(pulseMsg{})
+	model := updated.(Model)
+
+	if model.frame != 0 {
+		t.Errorf("pulse wrap: frame = %d, want 0", model.frame)
+	}
+}
+
+func TestModelUpdate_UnhandledKey(t *testing.T) {
+	m := NewModel("1.0.0")
+	m.width = 100
+	m.height = 50
+	frameBefore := m.frame
+
+	updated, cmd := m.Update(tea.KeyMsg(tea.Key{Type: tea.KeyRunes, Runes: []rune{'x'}}))
+	model := updated.(Model)
+
+	if model.frame != frameBefore {
+		t.Error("unhandled key should not change frame")
+	}
+	if cmd != nil {
+		t.Error("unhandled key should return nil command")
 	}
 }
 

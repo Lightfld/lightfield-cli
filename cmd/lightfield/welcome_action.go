@@ -11,6 +11,11 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
+// Attach the welcome screen as the root command's Action. This overrides the
+// default (nil) Action on the Stainless-generated cmd.Command so that running
+// "lightfield" with no subcommand shows the interactive welcome TUI instead of
+// bare help text. We wire it here rather than in cmd.go because that file is
+// generated and must not be hand-edited.
 func init() {
 	cmd.Command.Action = showWelcome
 }
@@ -40,7 +45,11 @@ func showWelcome(ctx context.Context, c *cli.Command) error {
 	return err
 }
 
-func shouldShowWelcome(stdin, stdout *os.File) bool {
+type fder interface {
+	Fd() uintptr
+}
+
+func shouldShowWelcome(stdin, stdout fder) bool {
 	if os.Getenv("CI") != "" || os.Getenv("LIGHTFIELD_NO_WELCOME") != "" {
 		return false
 	}
