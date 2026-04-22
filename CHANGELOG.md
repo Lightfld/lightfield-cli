@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3 (2026-04-22)
+
+Full Changelog: [v0.4.2...v0.4.3](https://github.com/Lightfld/lightfield-cli/compare/v0.4.2...v0.4.3)
+
 ## 0.4.2 (2026-04-22)
 
 Full Changelog: [v0.4.1...v0.4.2](https://github.com/Lightfld/lightfield-cli/compare/v0.4.1...v0.4.2)
