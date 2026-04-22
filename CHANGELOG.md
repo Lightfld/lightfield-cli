@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.2 (2026-04-22)
+
+Full Changelog: [v0.4.1...v0.4.2](https://github.com/Lightfld/lightfield-cli/compare/v0.4.1...v0.4.2)
+
+### Refactors
+
+* improve code quality, perf optimizations ([288166c](https://github.com/Lightfld/lightfield-cli/commit/288166c3471fcfcc239437c9bfb9c9fd7b2a6fac))
+
 ## 0.4.1 (2026-04-18)
 
 Full Changelog: [v0.4.0...v0.4.1](https://github.com/Lightfld/lightfield-cli/compare/v0.4.0...v0.4.1)
