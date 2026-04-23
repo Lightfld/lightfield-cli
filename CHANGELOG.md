@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0 (2026-04-23)
+
+Full Changelog: [v0.4.3...v0.5.0](https://github.com/Lightfld/lightfield-cli/compare/v0.4.3...v0.5.0)
+
+### Features
+
+* **api:** validate endpoint ([45a376e](https://github.com/Lightfld/lightfield-cli/commit/45a376ea246a3b52e1c3dfb9914fee36ae3e59eb))
+
+
+### Chores
+
+* **internal:** more robust bootstrap script ([8441180](https://github.com/Lightfld/lightfield-cli/commit/844118066c2ab47eff944f93b1b74921ff276025))
+
 ## 0.4.3 (2026-04-22)
 
 Full Changelog: [v0.4.2...v0.4.3](https://github.com/Lightfld/lightfield-cli/compare/v0.4.2...v0.4.3)
