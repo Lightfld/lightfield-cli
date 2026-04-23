@@ -84,6 +84,14 @@ func init() {
 		},
 		Commands: []*cli.Command{
 			{
+				Name:     "auth",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&authValidate,
+				},
+			},
+			{
 				Name:     "account",
 				Category: "API RESOURCE",
 				Suggest:  true,
