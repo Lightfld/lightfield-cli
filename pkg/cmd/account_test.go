@@ -14,8 +14,8 @@ func TestAccountCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"account", "create",
-			"--fields", "{foo: string}",
-			"--relationships", "{foo: string}",
+			"--fields", "{$name: $name, $facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
+			"--relationships", "{$contact: string, $owner: string}",
 		)
 	})
 
@@ -23,9 +23,29 @@ func TestAccountCreate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  foo: string\n" +
+			"  $name: $name\n" +
+			"  $facebook: $facebook\n" +
+			"  $headcount: $headcount\n" +
+			"  $industry:\n" +
+			"    - string\n" +
+			"  $instagram: $instagram\n" +
+			"  $lastFundingType: $lastFundingType\n" +
+			"  $linkedIn: $linkedIn\n" +
+			"  $primaryAddress:\n" +
+			"    city: city\n" +
+			"    country: country\n" +
+			"    latitude: 0\n" +
+			"    longitude: 0\n" +
+			"    postalCode: postalCode\n" +
+			"    state: state\n" +
+			"    street: street\n" +
+			"    street2: street2\n" +
+			"  $twitter: $twitter\n" +
+			"  $website:\n" +
+			"    - string\n" +
 			"relationships:\n" +
-			"  foo: string\n")
+			"  $contact: string\n" +
+			"  $owner: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -52,8 +72,8 @@ func TestAccountUpdate(t *testing.T) {
 			"--api-key", "string",
 			"account", "update",
 			"--id", "id",
-			"--fields", "{foo: string}",
-			"--relationships", "{foo: {add: string, remove: string, replace: string}}",
+			"--fields", "{$facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $name: $name, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
+			"--relationships", "{$contact: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -61,9 +81,32 @@ func TestAccountUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
-			"  foo: string\n" +
+			"  $facebook: $facebook\n" +
+			"  $headcount: $headcount\n" +
+			"  $industry:\n" +
+			"    - string\n" +
+			"  $instagram: $instagram\n" +
+			"  $lastFundingType: $lastFundingType\n" +
+			"  $linkedIn: $linkedIn\n" +
+			"  $name: $name\n" +
+			"  $primaryAddress:\n" +
+			"    city: city\n" +
+			"    country: country\n" +
+			"    latitude: 0\n" +
+			"    longitude: 0\n" +
+			"    postalCode: postalCode\n" +
+			"    state: state\n" +
+			"    street: street\n" +
+			"    street2: street2\n" +
+			"  $twitter: $twitter\n" +
+			"  $website:\n" +
+			"    - string\n" +
 			"relationships:\n" +
-			"  foo:\n" +
+			"  $contact:\n" +
+			"    add: string\n" +
+			"    remove: string\n" +
+			"    replace: string\n" +
+			"  $owner:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n")

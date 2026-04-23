@@ -16,7 +16,7 @@ func TestTaskCreate(t *testing.T) {
 			"--api-key", "string",
 			"task", "create",
 			"--fields", "{$status: $status, $title: $title, $description: $description, $dueAt: $dueAt}",
-			"--relationships", "{foo: string}",
+			"--relationships", "{$assignedTo: string, $account: string, $createdBy: string, $opportunity: string}",
 		)
 	})
 
@@ -33,7 +33,7 @@ func TestTaskCreate(t *testing.T) {
 			"--fields.title", "$title",
 			"--fields.description", "$description",
 			"--fields.due-at", "$dueAt",
-			"--relationships", "{foo: string}",
+			"--relationships", "{$assignedTo: string, $account: string, $createdBy: string, $opportunity: string}",
 		)
 	})
 
@@ -46,7 +46,10 @@ func TestTaskCreate(t *testing.T) {
 			"  $description: $description\n" +
 			"  $dueAt: $dueAt\n" +
 			"relationships:\n" +
-			"  foo: string\n")
+			"  $assignedTo: string\n" +
+			"  $account: string\n" +
+			"  $createdBy: string\n" +
+			"  $opportunity: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -74,7 +77,7 @@ func TestTaskUpdate(t *testing.T) {
 			"task", "update",
 			"--id", "id",
 			"--fields", "{$description: $description, $dueAt: $dueAt, $status: $status, $title: $title}",
-			"--relationships", "{foo: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: string}, $assignedTo: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -92,7 +95,7 @@ func TestTaskUpdate(t *testing.T) {
 			"--fields.due-at", "$dueAt",
 			"--fields.status", "$status",
 			"--fields.title", "$title",
-			"--relationships", "{foo: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: string}, $assignedTo: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -105,7 +108,15 @@ func TestTaskUpdate(t *testing.T) {
 			"  $status: $status\n" +
 			"  $title: $title\n" +
 			"relationships:\n" +
-			"  foo:\n" +
+			"  $account:\n" +
+			"    add: string\n" +
+			"    remove: string\n" +
+			"    replace: string\n" +
+			"  $assignedTo:\n" +
+			"    add: string\n" +
+			"    remove: string\n" +
+			"    replace: string\n" +
+			"  $opportunity:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n")
