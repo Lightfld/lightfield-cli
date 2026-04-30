@@ -46,12 +46,12 @@ var taskCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Title of the task.",
 			InnerField: "$title",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.description",
 			Usage:      "Description of the task in markdown format.",
 			InnerField: "$description",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.due-at",
 			Usage:      "Due date as an ISO 8601 datetime string.",
 			InnerField: "$dueAt",
@@ -99,22 +99,22 @@ var taskUpdate = requestflag.WithInnerFlags(cli.Command{
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.description",
 			Usage:      "Description of the task in markdown format.",
 			InnerField: "$description",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.due-at",
 			Usage:      "Due date as an ISO 8601 datetime string.",
 			InnerField: "$dueAt",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.status",
 			Usage:      "Task status. One of: `TODO`, `IN_PROGRESS`, `COMPLETE`, `CANCELLED`.",
 			InnerField: "$status",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.title",
 			Usage:      "Title of the task.",
 			InnerField: "$title",

@@ -40,7 +40,7 @@ var noteCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Title of the note.",
 			InnerField: "$title",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.content",
 			Usage:      "Content of the note as markdown formatted text.",
 			InnerField: "$content",
@@ -100,12 +100,12 @@ var noteUpdate = requestflag.WithInnerFlags(cli.Command{
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.content",
 			Usage:      "Content of the note as markdown formatted text.",
 			InnerField: "$content",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.title",
 			Usage:      "Title of the note.",
 			InnerField: "$title",
