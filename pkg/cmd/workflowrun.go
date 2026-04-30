@@ -20,9 +20,10 @@ var workflowRunStatus = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "run-id",
-			Usage:    "Unique identifier of the workflow run.",
-			Required: true,
+			Name:      "run-id",
+			Usage:     "Unique identifier of the workflow run.",
+			Required:  true,
+			PathParam: "runId",
 		},
 	},
 	Action:          handleWorkflowRunStatus,

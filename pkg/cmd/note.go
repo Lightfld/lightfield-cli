@@ -66,9 +66,10 @@ var noteRetrieve = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the note to retrieve.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the note to retrieve.",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleNoteRetrieve,
@@ -81,9 +82,10 @@ var noteUpdate = requestflag.WithInnerFlags(cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the note to update.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the note to update.",
+			Required:  true,
+			PathParam: "id",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
@@ -153,8 +155,6 @@ func handleNoteCreate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.NoteNewParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -165,6 +165,8 @@ func handleNoteCreate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.NoteNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -239,8 +241,6 @@ func handleNoteUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.NoteUpdateParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -251,6 +251,8 @@ func handleNoteUpdate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.NoteUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -285,8 +287,6 @@ func handleNoteList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.NoteListParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -297,6 +297,8 @@ func handleNoteList(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.NoteListParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))

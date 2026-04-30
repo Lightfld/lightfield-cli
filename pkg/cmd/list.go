@@ -54,9 +54,10 @@ var listRetrieve = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the list to retrieve.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the list to retrieve.",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleListRetrieve,
@@ -69,9 +70,10 @@ var listUpdate = requestflag.WithInnerFlags(cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the list to update.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the list to update.",
+			Required:  true,
+			PathParam: "id",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
@@ -122,9 +124,10 @@ var listListAccounts = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "list-id",
-			Usage:    "Unique identifier of the list.",
-			Required: true,
+			Name:      "list-id",
+			Usage:     "Unique identifier of the list.",
+			Required:  true,
+			PathParam: "listId",
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
@@ -147,9 +150,10 @@ var listListContacts = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "list-id",
-			Usage:    "Unique identifier of the list.",
-			Required: true,
+			Name:      "list-id",
+			Usage:     "Unique identifier of the list.",
+			Required:  true,
+			PathParam: "listId",
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
@@ -172,9 +176,10 @@ var listListOpportunities = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "list-id",
-			Usage:    "Unique identifier of the list.",
-			Required: true,
+			Name:      "list-id",
+			Usage:     "Unique identifier of the list.",
+			Required:  true,
+			PathParam: "listId",
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
@@ -199,8 +204,6 @@ func handleListCreate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.ListNewParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -211,6 +214,8 @@ func handleListCreate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.ListNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -285,8 +290,6 @@ func handleListUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.ListUpdateParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -297,6 +300,8 @@ func handleListUpdate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.ListUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -331,8 +336,6 @@ func handleListList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.ListListParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -343,6 +346,8 @@ func handleListList(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.ListListParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -375,8 +380,6 @@ func handleListListAccounts(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.ListListAccountsParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -387,6 +390,8 @@ func handleListListAccounts(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.ListListAccountsParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -424,8 +429,6 @@ func handleListListContacts(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.ListListContactsParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -436,6 +439,8 @@ func handleListListContacts(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.ListListContactsParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -473,8 +478,6 @@ func handleListListOpportunities(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.ListListOpportunitiesParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -485,6 +488,8 @@ func handleListListOpportunities(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.ListListOpportunitiesParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
