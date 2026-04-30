@@ -53,9 +53,10 @@ var fileRetrieve = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the file to retrieve.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the file to retrieve.",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleFileRetrieve,
@@ -88,9 +89,10 @@ var fileCancel = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the file to cancel.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the file to cancel.",
+			Required:  true,
+			PathParam: "id",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "body",
@@ -107,9 +109,10 @@ var fileComplete = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the file to complete.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the file to complete.",
+			Required:  true,
+			PathParam: "id",
 		},
 		&requestflag.Flag[string]{
 			Name:     "md5",
@@ -127,9 +130,10 @@ var fileURL = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the file to download.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the file to download.",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleFileURL,
@@ -144,8 +148,6 @@ func handleFileCreate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.FileNewParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -156,6 +158,8 @@ func handleFileCreate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.FileNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -227,8 +231,6 @@ func handleFileList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.FileListParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -239,6 +241,8 @@ func handleFileList(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.FileListParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -271,8 +275,6 @@ func handleFileCancel(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.FileCancelParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -283,6 +285,8 @@ func handleFileCancel(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.FileCancelParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -320,8 +324,6 @@ func handleFileComplete(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.FileCompleteParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -332,6 +334,8 @@ func handleFileComplete(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.FileCompleteParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))

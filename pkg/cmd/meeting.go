@@ -96,9 +96,10 @@ var meetingRetrieve = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the meeting to retrieve.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the meeting to retrieve.",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleMeetingRetrieve,
@@ -111,9 +112,10 @@ var meetingUpdate = requestflag.WithInnerFlags(cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the meeting to update.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the meeting to update.",
+			Required:  true,
+			PathParam: "id",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
@@ -172,8 +174,6 @@ func handleMeetingCreate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.MeetingNewParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -184,6 +184,8 @@ func handleMeetingCreate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.MeetingNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -258,8 +260,6 @@ func handleMeetingUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.MeetingUpdateParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -270,6 +270,8 @@ func handleMeetingUpdate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.MeetingUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -304,8 +306,6 @@ func handleMeetingList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.MeetingListParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -316,6 +316,8 @@ func handleMeetingList(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.MeetingListParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))

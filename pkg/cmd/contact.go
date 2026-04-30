@@ -41,9 +41,10 @@ var contactRetrieve = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the contact to retrieve.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the contact to retrieve.",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleContactRetrieve,
@@ -56,9 +57,10 @@ var contactUpdate = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Usage:    "Unique identifier of the contact to update.",
-			Required: true,
+			Name:      "id",
+			Usage:     "Unique identifier of the contact to update.",
+			Required:  true,
+			PathParam: "id",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
@@ -112,8 +114,6 @@ func handleContactCreate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.ContactNewParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -124,6 +124,8 @@ func handleContactCreate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.ContactNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -198,8 +200,6 @@ func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.ContactUpdateParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -210,6 +210,8 @@ func handleContactUpdate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.ContactUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -244,8 +246,6 @@ func handleContactList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomlightfldlightfieldgo.ContactListParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -256,6 +256,8 @@ func handleContactList(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomlightfldlightfieldgo.ContactListParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
