@@ -60,22 +60,22 @@ var meetingCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "A list of attendee email addresses.",
 			InnerField: "$attendeeEmails",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.description",
 			Usage:      "A description of the meeting.",
 			InnerField: "$description",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.meeting-url",
 			Usage:      "The URL for the meeting.",
 			InnerField: "$meetingUrl",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.organizer-email",
 			Usage:      "The email address of the meeting organizer. This field accepts a single email address.",
 			InnerField: "$organizerEmail",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.privacy-setting",
 			Usage:      "The privacy setting for the meeting (`FULL` or `METADATA`).",
 			InnerField: "$privacySetting",
@@ -130,7 +130,7 @@ var meetingUpdate = requestflag.WithInnerFlags(cli.Command{
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "fields.privacy-setting",
 			Usage:      "The privacy setting for the meeting.",
 			InnerField: "$privacySetting",
