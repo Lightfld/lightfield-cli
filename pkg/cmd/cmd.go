@@ -206,6 +206,19 @@ func init() {
 				},
 			},
 			{
+				Name:     "object",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&objectCreate,
+					&objectRetrieve,
+					&objectUpdate,
+					&objectList,
+					&objectDefinitions,
+					&objectListDefinitions,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "lightfield @manpages [-o lightfield.1] [--gzip]",
