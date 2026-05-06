@@ -15,7 +15,7 @@ func TestListCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"list", "create",
-			"--fields", "{$name: $name, $objectType: account}",
+			"--fields", "{$name: $name, $objectType: $objectType}",
 			"--relationships", "{$accounts: string}",
 		)
 	})
@@ -30,7 +30,7 @@ func TestListCreate(t *testing.T) {
 			"--api-key", "string",
 			"list", "create",
 			"--fields.name", "$name",
-			"--fields.object-type", "account",
+			"--fields.object-type", "$objectType",
 			"--relationships", "{$accounts: string}",
 		)
 	})
@@ -40,7 +40,7 @@ func TestListCreate(t *testing.T) {
 		pipeData := []byte("" +
 			"fields:\n" +
 			"  $name: $name\n" +
-			"  $objectType: account\n" +
+			"  $objectType: $objectType\n" +
 			"relationships:\n" +
 			"  $accounts: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
