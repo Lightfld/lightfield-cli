@@ -219,6 +219,16 @@ func init() {
 				},
 			},
 			{
+				Name:     "email",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&emailRetrieve,
+					&emailDraft,
+					&emailSend,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "lightfield @manpages [-o lightfield.1] [--gzip]",
