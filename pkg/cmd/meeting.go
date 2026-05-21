@@ -16,7 +16,7 @@ import (
 
 var meetingCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
-	Usage:   "Creates a new meeting record. This endpoint only supports creation of meetings\nin the past. The `$title`, `$startDate`, and `$endDate` fields are required.\nOnly the `$transcript` relationship is writable on create; all other meeting\nrelationships are system-managed. The response is privacy-aware and includes a\nread-only `accessLevel`. See\n<u>[Uploading meeting transcripts](/using-the-api/uploading-meeting-transcripts/)</u>\nfor the full file upload and transcript attachment flow.",
+	Usage:   "Creates a new meeting record. This endpoint only supports creation of meetings\nin the past. The `$title`, `$startDate`, and `$endDate` fields are required.\nOnly the `$transcript` relationship is writable on create; all other meeting\nrelationships are system-managed. The `$account` and `$opportunity`\nrelationships are read-only and are derived from the meeting's `$contact`\nattendees and the accounts/opportunities those contacts belong to. The response\nis privacy-aware and includes a read-only `accessLevel`. See\n<u>[Uploading meeting transcripts](/using-the-api/uploading-meeting-transcripts/)</u>\nfor the full file upload and transcript attachment flow.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{

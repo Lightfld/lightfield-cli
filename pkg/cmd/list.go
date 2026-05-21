@@ -42,7 +42,7 @@ var listCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "fields.object-type",
-			Usage:      "The type of entities this list contains. One of `account`, `contact`, or `opportunity`.",
+			Usage:      "The type of entities this list contains. Use `$account`, `$contact`, or `$opportunity` (the `$` prefix identifies system types). Bare slugs without the prefix (e.g. `account`) are accepted for backward compatibility but are deprecated.",
 			InnerField: "$objectType",
 		},
 	},
