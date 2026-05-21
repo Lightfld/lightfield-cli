@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.5.0 (2026-05-21)
+
+Full Changelog: [v0.4.3...v0.5.0](https://github.com/Lightfld/lightfield-cli/compare/v0.4.3...v0.5.0)
+
+### Features
+
+* **api:** allow email get + send API ([33dc16e](https://github.com/Lightfld/lightfield-cli/commit/33dc16e88f1c4dcf658b136b55718c4cf774c816))
+* **api:** manual updates to test custom objects ([7b0551f](https://github.com/Lightfld/lightfield-cli/commit/7b0551fac4872e1d171f4282218373080c2cb960))
+* **api:** release email API ([99f0ed8](https://github.com/Lightfld/lightfield-cli/commit/99f0ed804560e72f48235b8414eb6666171a5655))
+* **api:** validate endpoint ([45a376e](https://github.com/Lightfld/lightfield-cli/commit/45a376ea246a3b52e1c3dfb9914fee36ae3e59eb))
+* support passing path and query params over stdin ([54c7989](https://github.com/Lightfld/lightfield-cli/commit/54c79892b707029d25b60142138e13dcf2f0d2a9))
+
+
+### Bug Fixes
+
+* **cli:** correctly load zsh autocompletion ([b004e95](https://github.com/Lightfld/lightfield-cli/commit/b004e954299fff67184a1651943b6989523ec7e5))
+* flags for nullable body scalar fields are strictly typed ([48e8446](https://github.com/Lightfld/lightfield-cli/commit/48e84462a50f6899af0d8b399ed8da0e6639722e))
+
+
+### Chores
+
+* **internal:** more robust bootstrap script ([8441180](https://github.com/Lightfld/lightfield-cli/commit/844118066c2ab47eff944f93b1b74921ff276025))
+* redact api-key headers in debug logs ([3a7dce1](https://github.com/Lightfld/lightfield-cli/commit/3a7dce1cd40604206e809de21df1b79f1e1e1cb2))
+* update SDK settings ([4015794](https://github.com/Lightfld/lightfield-cli/commit/4015794d1e60cbc8e1836d595ca7f7b36cf9a2e6))
+
 ## 0.4.3 (2026-04-22)
 
 Full Changelog: [v0.4.2...v0.4.3](https://github.com/Lightfld/lightfield-cli/compare/v0.4.2...v0.4.3)
