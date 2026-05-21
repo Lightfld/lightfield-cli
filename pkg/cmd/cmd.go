@@ -224,7 +224,6 @@ func init() {
 				Suggest:  true,
 				Commands: []*cli.Command{
 					&emailRetrieve,
-					&emailDraft,
 					&emailSend,
 				},
 			},
