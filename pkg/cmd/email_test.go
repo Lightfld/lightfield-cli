@@ -41,8 +41,8 @@ func TestEmailDraft(t *testing.T) {
 			"--from", "sales@acme.com",
 			"--attachment", "file_01abc2def3ghi4jkl5mno6pqr",
 			"--bcc", "lead@example.com",
-			"--body", "{content: '<p>Hi there,</p><p>Following up on our chat earlier this week.</p>', contentType: HTML}",
 			"--cc", "lead@example.com",
+			"--message-body", "{content: '<p>Hi there,</p><p>Following up on our chat earlier this week.</p>', contentType: HTML}",
 			"--subject", "subject",
 			"--to", "lead@example.com",
 		)
@@ -60,9 +60,9 @@ func TestEmailDraft(t *testing.T) {
 			"--from", "sales@acme.com",
 			"--attachment", "file_01abc2def3ghi4jkl5mno6pqr",
 			"--bcc", "lead@example.com",
-			"--body.content", "<p>Hi there,</p><p>Following up on our chat earlier this week.</p>",
-			"--body.content-type", "HTML",
 			"--cc", "lead@example.com",
+			"--message-body.content", "<p>Hi there,</p><p>Following up on our chat earlier this week.</p>",
+			"--message-body.content-type", "HTML",
 			"--subject", "subject",
 			"--to", "lead@example.com",
 		)
@@ -76,11 +76,11 @@ func TestEmailDraft(t *testing.T) {
 			"  - file_01abc2def3ghi4jkl5mno6pqr\n" +
 			"bcc:\n" +
 			"  - lead@example.com\n" +
-			"body:\n" +
-			"  content: <p>Hi there,</p><p>Following up on our chat earlier this week.</p>\n" +
-			"  contentType: HTML\n" +
 			"cc:\n" +
 			"  - lead@example.com\n" +
+			"messageBody:\n" +
+			"  content: <p>Hi there,</p><p>Following up on our chat earlier this week.</p>\n" +
+			"  contentType: HTML\n" +
 			"subject: subject\n" +
 			"to:\n" +
 			"  - lead@example.com\n")
@@ -98,8 +98,8 @@ func TestEmailSend(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"email", "send",
-			"--body", "{content: '<p>Hi there,</p><p>Following up on our chat earlier this week.</p>', contentType: HTML}",
 			"--from", "sales@acme.com",
+			"--message-body", "{content: '<p>Hi there,</p><p>Following up on our chat earlier this week.</p>', contentType: HTML}",
 			"--subject", "Following up on our chat",
 			"--to", "lead@example.com",
 			"--attachment", "file_01abc2def3ghi4jkl5mno6pqr",
@@ -117,9 +117,9 @@ func TestEmailSend(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"email", "send",
-			"--body.content", "<p>Hi there,</p><p>Following up on our chat earlier this week.</p>",
-			"--body.content-type", "HTML",
 			"--from", "sales@acme.com",
+			"--message-body.content", "<p>Hi there,</p><p>Following up on our chat earlier this week.</p>",
+			"--message-body.content-type", "HTML",
 			"--subject", "Following up on our chat",
 			"--to", "lead@example.com",
 			"--attachment", "file_01abc2def3ghi4jkl5mno6pqr",
@@ -131,10 +131,10 @@ func TestEmailSend(t *testing.T) {
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"body:\n" +
+			"from: sales@acme.com\n" +
+			"messageBody:\n" +
 			"  content: <p>Hi there,</p><p>Following up on our chat earlier this week.</p>\n" +
 			"  contentType: HTML\n" +
-			"from: sales@acme.com\n" +
 			"subject: Following up on our chat\n" +
 			"to:\n" +
 			"  - lead@example.com\n" +

@@ -52,7 +52,7 @@ var emailList = cli.Command{
 
 var emailDraft = requestflag.WithInnerFlags(cli.Command{
 	Name:    "draft",
-	Usage:   "Creates a draft in the connected email account that owns the `from` address.\nMirrors native email-client behavior: only `from` is required — `to`, `cc`,\n`bcc`, `subject`, `body`, and `attachments` are all optional. At least one of\nthose optional fields must be populated; sending only `from` returns a 400.",
+	Usage:   "Creates a draft in the connected email account that owns the `from` address.\nMirrors native email-client behavior: only `from` is required — `to`, `cc`,\n`bcc`, `subject`, `messageBody`, and `attachments` are all optional. At least\none of those optional fields must be populated; sending only `from` returns\na 400.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -71,14 +71,15 @@ var emailDraft = requestflag.WithInnerFlags(cli.Command{
 			Usage:    "Bcc recipients (same shape as `to`).",
 			BodyPath: "bcc",
 		},
-		&requestflag.Flag[map[string]any]{
-			Name:     "body",
-			BodyPath: "body",
-		},
 		&requestflag.Flag[[]string]{
 			Name:     "cc",
 			Usage:    "Cc recipients (same shape as `to`).",
 			BodyPath: "cc",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "message-body",
+			Usage:    "Email message body (HTML or plain text).",
+			BodyPath: "messageBody",
 		},
 		&requestflag.Flag[string]{
 			Name:     "subject",
@@ -94,14 +95,14 @@ var emailDraft = requestflag.WithInnerFlags(cli.Command{
 	Action:          handleEmailDraft,
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
-	"body": {
+	"message-body": {
 		&requestflag.InnerFlag[string]{
-			Name:       "body.content",
+			Name:       "message-body.content",
 			Usage:      "Email body content.",
 			InnerField: "content",
 		},
 		&requestflag.InnerFlag[string]{
-			Name:       "body.content-type",
+			Name:       "message-body.content-type",
 			Usage:      "Defaults to `HTML`.",
 			InnerField: "contentType",
 		},
@@ -113,16 +114,17 @@ var emailSend = requestflag.WithInnerFlags(cli.Command{
 	Usage:   "Sends an email via the connected email account that owns the `from` address.\nCurrently supports new sends only; replies and forwards are not yet supported.",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[map[string]any]{
-			Name:     "body",
-			Required: true,
-			BodyPath: "body",
-		},
 		&requestflag.Flag[string]{
 			Name:     "from",
 			Usage:    "Bare email address (no display name). Must match a connected email account owned by the API key user. Compared case-insensitively. Used as the From header when sending.",
 			Required: true,
 			BodyPath: "from",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "message-body",
+			Usage:    "Email message body (HTML or plain text).",
+			Required: true,
+			BodyPath: "messageBody",
 		},
 		&requestflag.Flag[string]{
 			Name:     "subject",
@@ -155,14 +157,14 @@ var emailSend = requestflag.WithInnerFlags(cli.Command{
 	Action:          handleEmailSend,
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
-	"body": {
+	"message-body": {
 		&requestflag.InnerFlag[string]{
-			Name:       "body.content",
+			Name:       "message-body.content",
 			Usage:      "Email body content.",
 			InnerField: "content",
 		},
 		&requestflag.InnerFlag[string]{
-			Name:       "body.content-type",
+			Name:       "message-body.content-type",
 			Usage:      "Defaults to `HTML`.",
 			InnerField: "contentType",
 		},
