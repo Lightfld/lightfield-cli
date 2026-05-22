@@ -20,19 +20,91 @@ func TestEmailRetrieve(t *testing.T) {
 	})
 }
 
+func TestEmailList(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"email", "list",
+			"--limit", "1",
+			"--offset", "0",
+		)
+	})
+}
+
+func TestEmailDraft(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"email", "draft",
+			"--from", "sales@acme.com",
+			"--attachment", "file_01abc2def3ghi4jkl5mno6pqr",
+			"--bcc", "lead@example.com",
+			"--body", "{content: '<p>Hi there,</p><p>Following up on our chat earlier this week.</p>', contentType: HTML}",
+			"--cc", "lead@example.com",
+			"--subject", "subject",
+			"--to", "lead@example.com",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(emailDraft)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"email", "draft",
+			"--from", "sales@acme.com",
+			"--attachment", "file_01abc2def3ghi4jkl5mno6pqr",
+			"--bcc", "lead@example.com",
+			"--body.content", "<p>Hi there,</p><p>Following up on our chat earlier this week.</p>",
+			"--body.content-type", "HTML",
+			"--cc", "lead@example.com",
+			"--subject", "subject",
+			"--to", "lead@example.com",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("" +
+			"from: sales@acme.com\n" +
+			"attachments:\n" +
+			"  - file_01abc2def3ghi4jkl5mno6pqr\n" +
+			"bcc:\n" +
+			"  - lead@example.com\n" +
+			"body:\n" +
+			"  content: <p>Hi there,</p><p>Following up on our chat earlier this week.</p>\n" +
+			"  contentType: HTML\n" +
+			"cc:\n" +
+			"  - lead@example.com\n" +
+			"subject: subject\n" +
+			"to:\n" +
+			"  - lead@example.com\n")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"email", "draft",
+		)
+	})
+}
+
 func TestEmailSend(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
 			"email", "send",
-			"--body", "{content: x, contentType: HTML}",
-			"--from", `"S?oC"g*W"5"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw`,
-			"--subject", "x",
-			"--to", `"S?oC"g*W"5"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw`,
-			"--attachment", "string",
-			"--bcc", `"S?oC"g*W"5"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw`,
-			"--cc", `"S?oC"g*W"5"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw`,
+			"--body", "{content: '<p>Hi there,</p><p>Following up on our chat earlier this week.</p>', contentType: HTML}",
+			"--from", "sales@acme.com",
+			"--subject", "Following up on our chat",
+			"--to", "lead@example.com",
+			"--attachment", "file_01abc2def3ghi4jkl5mno6pqr",
+			"--bcc", "lead@example.com",
+			"--cc", "lead@example.com",
 		)
 	})
 
@@ -45,14 +117,14 @@ func TestEmailSend(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"email", "send",
-			"--body.content", "x",
+			"--body.content", "<p>Hi there,</p><p>Following up on our chat earlier this week.</p>",
 			"--body.content-type", "HTML",
-			"--from", `"S?oC"g*W"5"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw`,
-			"--subject", "x",
-			"--to", `"S?oC"g*W"5"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw`,
-			"--attachment", "string",
-			"--bcc", `"S?oC"g*W"5"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw`,
-			"--cc", `"S?oC"g*W"5"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw`,
+			"--from", "sales@acme.com",
+			"--subject", "Following up on our chat",
+			"--to", "lead@example.com",
+			"--attachment", "file_01abc2def3ghi4jkl5mno6pqr",
+			"--bcc", "lead@example.com",
+			"--cc", "lead@example.com",
 		)
 	})
 
@@ -60,22 +132,18 @@ func TestEmailSend(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"body:\n" +
-			"  content: x\n" +
+			"  content: <p>Hi there,</p><p>Following up on our chat earlier this week.</p>\n" +
 			"  contentType: HTML\n" +
-			"from: >-\n" +
-			"  \"S?oC\"g*W\"5\"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw\n" +
-			"subject: x\n" +
+			"from: sales@acme.com\n" +
+			"subject: Following up on our chat\n" +
 			"to:\n" +
-			"  - >-\n" +
-			"    \"S?oC\"g*W\"5\"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw\n" +
+			"  - lead@example.com\n" +
 			"attachments:\n" +
-			"  - string\n" +
+			"  - file_01abc2def3ghi4jkl5mno6pqr\n" +
 			"bcc:\n" +
-			"  - >-\n" +
-			"    \"S?oC\"g*W\"5\"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw\n" +
+			"  - lead@example.com\n" +
 			"cc:\n" +
-			"  - >-\n" +
-			"    \"S?oC\"g*W\"5\"@m-0-9.V9.w4-o2-l7--.TJdq6.1k.H8n-SjA-.1.U3k7.-F86WnfNI.-R6O-N68g-4-.AmqyytAVIw\n")
+			"  - lead@example.com\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
