@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0 (2026-05-22)
+
+Full Changelog: [v0.5.0...v0.6.0](https://github.com/Lightfld/lightfield-cli/compare/v0.5.0...v0.6.0)
+
+### Features
+
+* **api:** Email API release ([cdfb440](https://github.com/Lightfld/lightfield-cli/commit/cdfb440665b838ea1e724220520ee7e6f5a980ee))
+* **api:** fix email request body to messageBody ([0b66417](https://github.com/Lightfld/lightfield-cli/commit/0b66417784c61b1ab4515ae7ac5dba1bf50fd503))
+
 ## 0.5.0 (2026-05-21)
 
 Full Changelog: [v0.4.3...v0.5.0](https://github.com/Lightfld/lightfield-cli/compare/v0.4.3...v0.5.0)
