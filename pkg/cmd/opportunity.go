@@ -98,6 +98,26 @@ var opportunityList = cli.Command{
 	HideHelpCommand: true,
 }
 
+var opportunityDelete = cli.Command{
+	Name:    "delete",
+	Usage:   "Moves an opportunity to the trash. The opportunity is soft-deleted and may be\nrestored from the Lightfield UI. Associated tasks, notes, and meetings are not\ndeleted.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the opportunity to delete.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "body",
+			BodyRoot: true,
+		},
+	},
+	Action:          handleOpportunityDelete,
+	HideHelpCommand: true,
+}
+
 var opportunityDefinitions = cli.Command{
 	Name:            "definitions",
 	Usage:           "Returns the schema for all field and relationship definitions available on\nopportunities, including both system-defined and custom fields. Useful for\nunderstanding the shape of opportunity data before creating or updating records.\nSee <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u>\nfor more details.",
@@ -276,6 +296,55 @@ func handleOpportunityList(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "opportunity list",
+		Transform:      transform,
+	})
+}
+
+func handleOpportunityDelete(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.OpportunityDeleteParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Opportunity.Delete(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "opportunity delete",
 		Transform:      transform,
 	})
 }

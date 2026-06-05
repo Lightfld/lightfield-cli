@@ -27,7 +27,7 @@ var noteCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationships to set on the new note. System relationships use a `$` prefix (e.g. `$account`, `$opportunity`). Each value is a single entity ID or an array of IDs. The note author is automatically set to the API key owner.",
+			Usage:    "Relationships to set on the new note. System relationships use a `$` prefix (e.g. `$account`, `$opportunity`, `$contact`); custom relationships use their bare slug. Each value is a single entity ID or an array of IDs. The note author is automatically set to the API key owner.",
 			BodyPath: "relationships",
 		},
 	},
@@ -44,18 +44,6 @@ var noteCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "fields.content",
 			Usage:      "Content of the note as markdown formatted text.",
 			InnerField: "$content",
-		},
-	},
-	"relationships": {
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.account",
-			Usage:      "ID(s) of accounts to associate with this note.",
-			InnerField: "$account",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "relationships.opportunity",
-			Usage:      "ID(s) of opportunities to associate with this note.",
-			InnerField: "$opportunity",
 		},
 	},
 })
@@ -94,7 +82,7 @@ var noteUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$account`, `$opportunity`). Each value is an operation object with `add` or `remove`.",
+			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$account`, `$opportunity`, `$contact`); custom relationships use their bare slug. Each value is an operation object with `add` or `remove`.",
 			BodyPath: "relationships",
 		},
 	},
@@ -111,18 +99,6 @@ var noteUpdate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "fields.title",
 			Usage:      "Title of the note.",
 			InnerField: "$title",
-		},
-	},
-	"relationships": {
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.account",
-			Usage:      "Operation to modify associated accounts.",
-			InnerField: "$account",
-		},
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "relationships.opportunity",
-			Usage:      "Operation to modify associated opportunities.",
-			InnerField: "$opportunity",
 		},
 	},
 })
@@ -144,6 +120,35 @@ var noteList = cli.Command{
 		},
 	},
 	Action:          handleNoteList,
+	HideHelpCommand: true,
+}
+
+var noteDelete = cli.Command{
+	Name:    "delete",
+	Usage:   "Moves a note to the trash. The note is soft-deleted and may be restored from the\nLightfield UI.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the note to delete.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "body",
+			BodyRoot: true,
+		},
+	},
+	Action:          handleNoteDelete,
+	HideHelpCommand: true,
+}
+
+var noteDefinitions = cli.Command{
+	Name:            "definitions",
+	Usage:           "Returns the schema for the field and relationship definitions available on\nnotes. Useful for understanding the shape of note data before creating or\nupdating records. See\n<u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for\nmore details.",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleNoteDefinitions,
 	HideHelpCommand: true,
 }
 
@@ -316,6 +321,94 @@ func handleNoteList(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "note list",
+		Transform:      transform,
+	})
+}
+
+func handleNoteDelete(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.NoteDeleteParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Note.Delete(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "note delete",
+		Transform:      transform,
+	})
+}
+
+func handleNoteDefinitions(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Note.Definitions(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "note definitions",
 		Transform:      transform,
 	})
 }

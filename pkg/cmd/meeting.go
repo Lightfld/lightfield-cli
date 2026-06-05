@@ -166,6 +166,26 @@ var meetingList = cli.Command{
 	HideHelpCommand: true,
 }
 
+var meetingDelete = cli.Command{
+	Name:    "delete",
+	Usage:   "Moves a meeting to the trash. The meeting is soft-deleted and may be restored\nfrom the Lightfield UI. Only callers who can edit the meeting (meeting\nparticipants or workspace admins) may delete it. Calling delete on a meeting\nthat is already trashed returns a 404.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the meeting to delete.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "body",
+			BodyRoot: true,
+		},
+	},
+	Action:          handleMeetingDelete,
+	HideHelpCommand: true,
+}
+
 func handleMeetingCreate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -335,6 +355,55 @@ func handleMeetingList(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "meeting list",
+		Transform:      transform,
+	})
+}
+
+func handleMeetingDelete(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.MeetingDeleteParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Meeting.Delete(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "meeting delete",
 		Transform:      transform,
 	})
 }
