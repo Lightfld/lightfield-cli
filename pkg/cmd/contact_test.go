@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Lightfld/lightfield-cli/internal/mocktest"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestContactCreate(t *testing.T) {
@@ -15,7 +16,7 @@ func TestContactCreate(t *testing.T) {
 			"--api-key", "string",
 			"contact", "create",
 			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
-			"--relationships", "{$account: string}",
+			"--relationships", "{$account: string, $files: string}",
 		)
 	})
 
@@ -30,7 +31,8 @@ func TestContactCreate(t *testing.T) {
 			"    lastName: lastName\n" +
 			"  $profilePhotoUrl: $profilePhotoUrl\n" +
 			"relationships:\n" +
-			"  $account: string\n")
+			"  $account: string\n" +
+			"  $files: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -58,7 +60,7 @@ func TestContactUpdate(t *testing.T) {
 			"contact", "update",
 			"--id", "id",
 			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
-			"--relationships", "{$account: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: string}, $files: {add: string, remove: string}}",
 		)
 	})
 
@@ -76,7 +78,10 @@ func TestContactUpdate(t *testing.T) {
 			"  $account:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n")
+			"    replace: string\n" +
+			"  $files:\n" +
+			"    add: string\n" +
+			"    remove: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -94,6 +99,42 @@ func TestContactList(t *testing.T) {
 			"contact", "list",
 			"--limit", "1",
 			"--offset", "0",
+		)
+	})
+}
+
+func TestContactDelete(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"contact", "delete",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(contactDelete)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"contact", "delete",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"contact", "delete",
+			"--id", "id",
 		)
 	})
 }
