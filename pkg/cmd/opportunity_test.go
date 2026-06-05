@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Lightfld/lightfield-cli/internal/mocktest"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestOpportunityCreate(t *testing.T) {
@@ -15,7 +16,7 @@ func TestOpportunityCreate(t *testing.T) {
 			"--api-key", "string",
 			"opportunity", "create",
 			"--fields", "{$name: $name, $stage: $stage}",
-			"--relationships", "{$account: string, $champion: string, $createdBy: string, $evaluator: string, $owner: string}",
+			"--relationships", "{$account: string, $champion: string, $createdBy: string, $evaluator: string, $files: string, $owner: string}",
 		)
 	})
 
@@ -30,6 +31,7 @@ func TestOpportunityCreate(t *testing.T) {
 			"  $champion: string\n" +
 			"  $createdBy: string\n" +
 			"  $evaluator: string\n" +
+			"  $files: string\n" +
 			"  $owner: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
@@ -58,7 +60,7 @@ func TestOpportunityUpdate(t *testing.T) {
 			"opportunity", "update",
 			"--id", "id",
 			"--fields", "{$name: $name, $stage: $stage}",
-			"--relationships", "{$champion: {add: string, remove: string, replace: string}, $evaluator: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$champion: {add: string, remove: string, replace: string}, $evaluator: {add: string, remove: string, replace: string}, $files: {add: string, remove: string}, $owner: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -77,6 +79,9 @@ func TestOpportunityUpdate(t *testing.T) {
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n" +
+			"  $files:\n" +
+			"    add: string\n" +
+			"    remove: string\n" +
 			"  $owner:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
@@ -98,6 +103,42 @@ func TestOpportunityList(t *testing.T) {
 			"opportunity", "list",
 			"--limit", "1",
 			"--offset", "0",
+		)
+	})
+}
+
+func TestOpportunityDelete(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"opportunity", "delete",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(opportunityDelete)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"opportunity", "delete",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"opportunity", "delete",
+			"--id", "id",
 		)
 	})
 }

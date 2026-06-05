@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Lightfld/lightfield-cli/internal/mocktest"
+	"github.com/Lightfld/lightfield-cli/internal/requestflag"
 )
 
 func TestAccountCreate(t *testing.T) {
@@ -15,7 +16,7 @@ func TestAccountCreate(t *testing.T) {
 			"--api-key", "string",
 			"account", "create",
 			"--fields", "{$name: $name, $facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
-			"--relationships", "{$contact: string, $owner: string}",
+			"--relationships", "{$contact: string, $files: string, $owner: string}",
 		)
 	})
 
@@ -45,6 +46,7 @@ func TestAccountCreate(t *testing.T) {
 			"    - string\n" +
 			"relationships:\n" +
 			"  $contact: string\n" +
+			"  $files: string\n" +
 			"  $owner: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
@@ -73,7 +75,7 @@ func TestAccountUpdate(t *testing.T) {
 			"account", "update",
 			"--id", "id",
 			"--fields", "{$facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $name: $name, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
-			"--relationships", "{$contact: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$contact: {add: string, remove: string, replace: string}, $files: {add: string, remove: string}, $owner: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -106,6 +108,9 @@ func TestAccountUpdate(t *testing.T) {
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: string\n" +
+			"  $files:\n" +
+			"    add: string\n" +
+			"    remove: string\n" +
 			"  $owner:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
@@ -127,6 +132,42 @@ func TestAccountList(t *testing.T) {
 			"account", "list",
 			"--limit", "1",
 			"--offset", "0",
+		)
+	})
+}
+
+func TestAccountDelete(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"account", "delete",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(accountDelete)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"account", "delete",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"account", "delete",
+			"--id", "id",
 		)
 	})
 }

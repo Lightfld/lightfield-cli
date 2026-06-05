@@ -121,6 +121,32 @@ var objectList = cli.Command{
 	HideHelpCommand: true,
 }
 
+var objectDelete = cli.Command{
+	Name:    "delete",
+	Usage:   "Moves a custom object record to the trash. The record is soft-deleted and may be\nrestored from the Lightfield UI.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "entity-slug",
+			Usage:     "The slug of the custom object type.",
+			Required:  true,
+			PathParam: "entitySlug",
+		},
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "The ID of the record to delete.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "body",
+			BodyRoot: true,
+		},
+	},
+	Action:          handleObjectDelete,
+	HideHelpCommand: true,
+}
+
 var objectDefinitions = cli.Command{
 	Name:    "definitions",
 	Usage:   "Returns field and relationship definitions for the specified custom object type.",
@@ -342,6 +368,57 @@ func handleObjectList(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "object list",
+		Transform:      transform,
+	})
+}
+
+func handleObjectDelete(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.ObjectDeleteParams{
+		EntitySlug: cmd.Value("entity-slug").(string),
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Object.Delete(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "object delete",
 		Transform:      transform,
 	})
 }
