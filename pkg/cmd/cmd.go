@@ -239,6 +239,18 @@ func init() {
 				},
 			},
 			{
+				Name:     "merge",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&mergeGetMerge,
+					&mergeMergeAccounts,
+					&mergeMergeContacts,
+					&mergeMergeObjectValues,
+					&mergeMergeOpportunities,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "lightfield @manpages [-o lightfield.1] [--gzip]",
