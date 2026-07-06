@@ -186,6 +186,15 @@ var meetingDelete = cli.Command{
 	HideHelpCommand: true,
 }
 
+var meetingDefinitions = cli.Command{
+	Name:            "definitions",
+	Usage:           "Returns the schema for the field and relationship definitions available on\nmeetings. Useful for understanding the shape of meeting data before creating or\nupdating records. See\n<u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for\nmore details.",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleMeetingDefinitions,
+	HideHelpCommand: true,
+}
+
 func handleMeetingCreate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -404,6 +413,45 @@ func handleMeetingDelete(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "meeting delete",
+		Transform:      transform,
+	})
+}
+
+func handleMeetingDefinitions(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Meeting.Definitions(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "meeting definitions",
 		Transform:      transform,
 	})
 }
