@@ -45,6 +45,33 @@ var listCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "The type of entities this list contains. Use `$account`, `$contact`, or `$opportunity` (the `$` prefix identifies system types). Bare slugs without the prefix (e.g. `account`) are accepted for backward compatibility but are deprecated.",
 			InnerField: "$objectType",
 		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "fields.description",
+			Usage:      "Optional description of what this list is for.",
+			InnerField: "$description",
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "fields.kind",
+			Usage:      "Product-level list purpose. Normally omit to create a regular list; reserve `target` for the single account-prioritization (APG) demand list per org, and only for account/contact lists.",
+			InnerField: "$kind",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.accounts",
+			Usage:      "Account ID(s) to add as initial members. List `$objectType` must be `account`.",
+			InnerField: "$accounts",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.contacts",
+			Usage:      "Contact ID(s) to add as initial members. List `$objectType` must be `contact`.",
+			InnerField: "$contacts",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "relationships.opportunities",
+			Usage:      "Opportunity ID(s) to add as initial members. List `$objectType` must be `opportunity`.",
+			InnerField: "$opportunities",
+		},
 	},
 })
 
@@ -90,10 +117,37 @@ var listUpdate = requestflag.WithInnerFlags(cli.Command{
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
+		&requestflag.InnerFlag[*string]{
+			Name:       "fields.description",
+			Usage:      "Optional description of what this list is for. Pass null to clear.",
+			InnerField: "$description",
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "fields.kind",
+			Usage:      "Product-level list purpose. Normally leave unset; reserve `target` for the single account-prioritization (APG) demand list per org (account/contact lists only). Pass null to clear.",
+			InnerField: "$kind",
+		},
 		&requestflag.InnerFlag[string]{
 			Name:       "fields.name",
 			Usage:      "Display name of the list.",
 			InnerField: "$name",
+		},
+	},
+	"relationships": {
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.accounts",
+			Usage:      "Add/remove accounts. List `$objectType` must be `account`.",
+			InnerField: "$accounts",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.contacts",
+			Usage:      "Add/remove contacts. List `$objectType` must be `contact`.",
+			InnerField: "$contacts",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "relationships.opportunities",
+			Usage:      "Add/remove opportunities. List `$objectType` must be `opportunity`.",
+			InnerField: "$opportunities",
 		},
 	},
 })
