@@ -169,3 +169,13 @@ func TestMeetingDelete(t *testing.T) {
 		)
 	})
 }
+
+func TestMeetingDefinitions(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"meeting", "definitions",
+		)
+	})
+}

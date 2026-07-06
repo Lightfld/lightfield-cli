@@ -15,8 +15,8 @@ func TestListCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"list", "create",
-			"--fields", "{$name: $name, $objectType: $objectType}",
-			"--relationships", "{$accounts: string}",
+			"--fields", "{$name: $name, $objectType: $objectType, $description: $description, $kind: target}",
+			"--relationships", "{$accounts: string, $contacts: string, $opportunities: string}",
 		)
 	})
 
@@ -31,7 +31,11 @@ func TestListCreate(t *testing.T) {
 			"list", "create",
 			"--fields.name", "$name",
 			"--fields.object-type", "$objectType",
-			"--relationships", "{$accounts: string}",
+			"--fields.description", "$description",
+			"--fields.kind", "target",
+			"--relationships.accounts", "string",
+			"--relationships.contacts", "string",
+			"--relationships.opportunities", "string",
 		)
 	})
 
@@ -41,8 +45,12 @@ func TestListCreate(t *testing.T) {
 			"fields:\n" +
 			"  $name: $name\n" +
 			"  $objectType: $objectType\n" +
+			"  $description: $description\n" +
+			"  $kind: target\n" +
 			"relationships:\n" +
-			"  $accounts: string\n")
+			"  $accounts: string\n" +
+			"  $contacts: string\n" +
+			"  $opportunities: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -69,8 +77,8 @@ func TestListUpdate(t *testing.T) {
 			"--api-key", "string",
 			"list", "update",
 			"--id", "id",
-			"--fields", "{$name: $name}",
-			"--relationships", "{$accounts: {add: string, remove: string}}",
+			"--fields", "{$description: $description, $kind: target, $name: $name}",
+			"--relationships", "{$accounts: {add: string, remove: string}, $contacts: {add: string, remove: string}, $opportunities: {add: string, remove: string}}",
 		)
 	})
 
@@ -84,8 +92,12 @@ func TestListUpdate(t *testing.T) {
 			"--api-key", "string",
 			"list", "update",
 			"--id", "id",
+			"--fields.description", "$description",
+			"--fields.kind", "target",
 			"--fields.name", "$name",
-			"--relationships", "{$accounts: {add: string, remove: string}}",
+			"--relationships.accounts", "{add: string, remove: string}",
+			"--relationships.contacts", "{add: string, remove: string}",
+			"--relationships.opportunities", "{add: string, remove: string}",
 		)
 	})
 
@@ -93,9 +105,17 @@ func TestListUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
+			"  $description: $description\n" +
+			"  $kind: target\n" +
 			"  $name: $name\n" +
 			"relationships:\n" +
 			"  $accounts:\n" +
+			"    add: string\n" +
+			"    remove: string\n" +
+			"  $contacts:\n" +
+			"    add: string\n" +
+			"    remove: string\n" +
+			"  $opportunities:\n" +
 			"    add: string\n" +
 			"    remove: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(

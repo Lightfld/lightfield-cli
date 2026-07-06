@@ -142,6 +142,7 @@ func init() {
 					&meetingUpdate,
 					&meetingList,
 					&meetingDelete,
+					&meetingDefinitions,
 				},
 			},
 			{
