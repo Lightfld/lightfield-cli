@@ -72,7 +72,7 @@ func TestNoteUpdate(t *testing.T) {
 			"note", "update",
 			"--id", "id",
 			"--fields", "{$content: $content, $title: $title}",
-			"--relationships", "{$account: {add: string}, $contact: {add: string}, $opportunity: {add: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: string}, $contact: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -88,7 +88,7 @@ func TestNoteUpdate(t *testing.T) {
 			"--id", "id",
 			"--fields.content", "$content",
 			"--fields.title", "$title",
-			"--relationships", "{$account: {add: string}, $contact: {add: string}, $opportunity: {add: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: string}, $contact: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -101,10 +101,16 @@ func TestNoteUpdate(t *testing.T) {
 			"relationships:\n" +
 			"  $account:\n" +
 			"    add: string\n" +
+			"    remove: string\n" +
+			"    replace: string\n" +
 			"  $contact:\n" +
 			"    add: string\n" +
+			"    remove: string\n" +
+			"    replace: string\n" +
 			"  $opportunity:\n" +
-			"    add: string\n")
+			"    add: string\n" +
+			"    remove: string\n" +
+			"    replace: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",

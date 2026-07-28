@@ -252,6 +252,24 @@ func init() {
 				},
 			},
 			{
+				Name:     "message",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&messageRetrieve,
+					&messageList,
+				},
+			},
+			{
+				Name:     "channel",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&channelRetrieve,
+					&channelList,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "lightfield @manpages [-o lightfield.1] [--gzip]",
