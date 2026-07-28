@@ -16,7 +16,7 @@ func TestAccountCreate(t *testing.T) {
 			"--api-key", "string",
 			"account", "create",
 			"--fields", "{$name: $name, $facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
-			"--relationships", "{$contact: string, $files: string, $owner: string}",
+			"--relationships", "{$account-slack-channel: string, $contact: string, $files: string, $owner: string}",
 		)
 	})
 
@@ -45,6 +45,7 @@ func TestAccountCreate(t *testing.T) {
 			"  $website:\n" +
 			"    - string\n" +
 			"relationships:\n" +
+			"  $account-slack-channel: string\n" +
 			"  $contact: string\n" +
 			"  $files: string\n" +
 			"  $owner: string\n")
@@ -75,7 +76,7 @@ func TestAccountUpdate(t *testing.T) {
 			"account", "update",
 			"--id", "id",
 			"--fields", "{$facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $name: $name, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
-			"--relationships", "{$contact: {add: string, remove: string, replace: string}, $files: {add: string, remove: string}, $owner: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account-slack-channel: {add: string, remove: string, replace: string}, $contact: {add: string, remove: string, replace: string}, $files: {add: string, remove: string}, $owner: {add: string, remove: string, replace: string}}",
 		)
 	})
 
@@ -104,6 +105,10 @@ func TestAccountUpdate(t *testing.T) {
 			"  $website:\n" +
 			"    - string\n" +
 			"relationships:\n" +
+			"  $account-slack-channel:\n" +
+			"    add: string\n" +
+			"    remove: string\n" +
+			"    replace: string\n" +
 			"  $contact:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +

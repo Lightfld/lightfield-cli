@@ -82,7 +82,7 @@ var noteUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$account`, `$opportunity`, `$contact`); custom relationships use their bare slug. Each value is an operation object with `add` or `remove`.",
+			Usage:    "Relationship operations to apply. System relationships use a `$` prefix (e.g. `$account`, `$opportunity`, `$contact`); custom relationships use their bare slug. Each value is an operation object with `add` and/or `remove`. `replace` is not supported since note relationships are HAS_MANY.",
 			BodyPath: "relationships",
 		},
 	},
