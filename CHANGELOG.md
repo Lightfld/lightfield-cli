@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.7.0 (2026-08-06)
+
+Full Changelog: [v0.6.0...v0.7.0](https://github.com/Lightfld/lightfield-cli/compare/v0.6.0...v0.7.0)
+
+### Features
+
+* **api:** add delete endpoint ([58f69da](https://github.com/Lightfld/lightfield-cli/commit/58f69dab10cca092f22e2df9c78b66eafe608272))
+* **api:** add field value history ([5b2fe2d](https://github.com/Lightfld/lightfield-cli/commit/5b2fe2d17afbcca98ae7445f15d0da5ac76be46a))
+* **api:** Channel & Message API ([8a1f9e2](https://github.com/Lightfld/lightfield-cli/commit/8a1f9e242c01477991be10ffa095f8a02ca2aa38))
+* **api:** manual updates ([5538d9f](https://github.com/Lightfld/lightfield-cli/commit/5538d9fc3db691da0fe468c8042732a3576e3f01))
+* **api:** Merge and delete records via the API and Python SDK ([4c0fb60](https://github.com/Lightfld/lightfield-cli/commit/4c0fb60af57edbd4ccd5cfeb06251a9cab6e1b0d))
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([9720cd4](https://github.com/Lightfld/lightfield-cli/commit/9720cd4386cb543c361be0f38b4e7f3e40a633ca))
+
+
+### Bug Fixes
+
+* **go:** remove a nonexistent release workflow from release-please extra-files ([f6bde76](https://github.com/Lightfld/lightfield-cli/commit/f6bde769b779c876203af7fb7aa117629e021ddc))
+
 ## 0.6.0 (2026-05-22)
 
 Full Changelog: [v0.5.0...v0.6.0](https://github.com/Lightfld/lightfield-cli/compare/v0.5.0...v0.6.0)
