@@ -148,3 +148,17 @@ func TestContactDefinitions(t *testing.T) {
 		)
 	})
 }
+
+func TestContactFieldHistory(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"contact", "field-history",
+			"--id", "id",
+			"--field-key", "fieldKey",
+			"--after", "after",
+			"--limit", "1",
+		)
+	})
+}

@@ -186,3 +186,17 @@ func TestAccountDefinitions(t *testing.T) {
 		)
 	})
 }
+
+func TestAccountFieldHistory(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"account", "field-history",
+			"--id", "id",
+			"--field-key", "fieldKey",
+			"--after", "after",
+			"--limit", "1",
+		)
+	})
+}

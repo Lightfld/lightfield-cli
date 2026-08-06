@@ -145,6 +145,21 @@ func TestObjectDefinitions(t *testing.T) {
 	})
 }
 
+func TestObjectFieldHistory(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"object", "field-history",
+			"--entity-slug", "entitySlug",
+			"--id", "id",
+			"--field-key", "fieldKey",
+			"--after", "after",
+			"--limit", "1",
+		)
+	})
+}
+
 func TestObjectListDefinitions(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(

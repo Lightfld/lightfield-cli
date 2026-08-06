@@ -126,6 +126,38 @@ var accountDefinitions = cli.Command{
 	HideHelpCommand: true,
 }
 
+var accountFieldHistory = cli.Command{
+	Name:    "field-history",
+	Usage:   "Returns the value-change history for a single field on a record, newest first.\nConsecutive identical values are collapsed. History is cursor-paginated: pass\n`nextCursor` from the previous response as `after` to page through older values.\nOnly attribute-backed fields (custom attributes and attribute-backed system\nfields) have history — column-backed system fields return an error.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the record.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:      "field-key",
+			Usage:     "Field key whose value history to return. System fields use a `$` prefix (e.g. `$status`); custom attributes use their bare slug.",
+			Required:  true,
+			PathParam: "fieldKey",
+		},
+		&requestflag.Flag[string]{
+			Name:      "after",
+			Usage:     "Cursor from a previous response’s `nextCursor` to fetch the next page.",
+			QueryPath: "after",
+		},
+		&requestflag.Flag[int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of history entries to return. Defaults to 20, maximum 100.",
+			QueryPath: "limit",
+		},
+	},
+	Action:          handleAccountFieldHistory,
+	HideHelpCommand: true,
+}
+
 func handleAccountCreate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -383,6 +415,57 @@ func handleAccountDefinitions(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "account definitions",
+		Transform:      transform,
+	})
+}
+
+func handleAccountFieldHistory(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("field-key") && len(unusedArgs) > 0 {
+		cmd.Set("field-key", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.AccountFieldHistoryParams{
+		ID: cmd.Value("id").(string),
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Account.FieldHistory(
+		ctx,
+		cmd.Value("field-key").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "account field-history",
 		Transform:      transform,
 	})
 }
