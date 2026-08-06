@@ -102,6 +102,7 @@ func init() {
 					&accountList,
 					&accountDelete,
 					&accountDefinitions,
+					&accountFieldHistory,
 				},
 			},
 			{
@@ -115,6 +116,7 @@ func init() {
 					&contactList,
 					&contactDelete,
 					&contactDefinitions,
+					&contactFieldHistory,
 				},
 			},
 			{
@@ -169,6 +171,7 @@ func init() {
 					&opportunityList,
 					&opportunityDelete,
 					&opportunityDefinitions,
+					&opportunityFieldHistory,
 				},
 			},
 			{
@@ -225,6 +228,7 @@ func init() {
 					&objectList,
 					&objectDelete,
 					&objectDefinitions,
+					&objectFieldHistory,
 					&objectListDefinitions,
 				},
 			},
