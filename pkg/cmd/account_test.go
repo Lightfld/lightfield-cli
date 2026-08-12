@@ -76,7 +76,7 @@ func TestAccountUpdate(t *testing.T) {
 			"account", "update",
 			"--id", "id",
 			"--fields", "{$facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $name: $name, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
-			"--relationships", "{$account-slack-channel: {add: string, remove: string, replace: string}, $contact: {add: string, remove: string, replace: string}, $files: {add: string, remove: string}, $owner: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account-slack-channel: {add: string, remove: string, replace: replace}, $contact: {add: string, remove: string, replace: replace}, $files: {add: string, remove: string}, $owner: {add: string, remove: string, replace: replace}}",
 		)
 	})
 
@@ -108,18 +108,18 @@ func TestAccountUpdate(t *testing.T) {
 			"  $account-slack-channel:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $contact:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $files:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"  $owner:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n")
+			"    replace: replace\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
