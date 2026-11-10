@@ -72,7 +72,7 @@ func TestNoteUpdate(t *testing.T) {
 			"note", "update",
 			"--id", "id",
 			"--fields", "{$content: $content, $title: $title}",
-			"--relationships", "{$account: {add: string, remove: string, replace: string}, $contact: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $contact: {add: string, remove: string, replace: replace}, $opportunity: {add: string, remove: string, replace: replace}}",
 		)
 	})
 
@@ -88,7 +88,7 @@ func TestNoteUpdate(t *testing.T) {
 			"--id", "id",
 			"--fields.content", "$content",
 			"--fields.title", "$title",
-			"--relationships", "{$account: {add: string, remove: string, replace: string}, $contact: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $contact: {add: string, remove: string, replace: replace}, $opportunity: {add: string, remove: string, replace: replace}}",
 		)
 	})
 
@@ -102,15 +102,15 @@ func TestNoteUpdate(t *testing.T) {
 			"  $account:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $contact:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $opportunity:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n")
+			"    replace: replace\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",

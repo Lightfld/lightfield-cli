@@ -58,7 +58,7 @@ func TestObjectUpdate(t *testing.T) {
 			"--entity-slug", "entitySlug",
 			"--id", "id",
 			"--fields", "{foo: string}",
-			"--relationships", "{foo: {add: string, remove: string, replace: string}}",
+			"--relationships", "{foo: {add: string, remove: string, replace: replace}}",
 		)
 	})
 
@@ -71,7 +71,7 @@ func TestObjectUpdate(t *testing.T) {
 			"  foo:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n")
+			"    replace: replace\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",

@@ -77,7 +77,7 @@ func TestTaskUpdate(t *testing.T) {
 			"task", "update",
 			"--id", "id",
 			"--fields", "{$description: $description, $dueAt: $dueAt, $status: $status, $title: $title}",
-			"--relationships", "{$account: {add: string, remove: string, replace: string}, $assignedTo: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $assignedTo: {add: string, remove: string, replace: replace}, $opportunity: {add: string, remove: string, replace: replace}}",
 		)
 	})
 
@@ -95,7 +95,7 @@ func TestTaskUpdate(t *testing.T) {
 			"--fields.due-at", "$dueAt",
 			"--fields.status", "$status",
 			"--fields.title", "$title",
-			"--relationships", "{$account: {add: string, remove: string, replace: string}, $assignedTo: {add: string, remove: string, replace: string}, $opportunity: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $assignedTo: {add: string, remove: string, replace: replace}, $opportunity: {add: string, remove: string, replace: replace}}",
 		)
 	})
 
@@ -111,15 +111,15 @@ func TestTaskUpdate(t *testing.T) {
 			"  $account:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $assignedTo:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $opportunity:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n")
+			"    replace: replace\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",

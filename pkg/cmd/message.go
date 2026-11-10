@@ -16,7 +16,7 @@ import (
 
 var messageRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieves a single message by its ID. The message text is redacted based on the\ncaller-specific channel-visibility resolution, and the response includes a\nread-only `accessLevel`.",
+	Usage:   "Retrieves a single message by its ID. The message text is redacted based on the\ncaller-specific channel-visibility resolution, and the response includes a\nread-only `accessLevel`. Attachment file IDs are exposed via\n`relationships.$attachment` (same shape as email attachments); fetch their\ncontents with `GET /v1/files/{id}/url`.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

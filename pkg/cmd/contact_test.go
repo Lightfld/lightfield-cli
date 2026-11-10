@@ -60,7 +60,7 @@ func TestContactUpdate(t *testing.T) {
 			"contact", "update",
 			"--id", "id",
 			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
-			"--relationships", "{$account: {add: string, remove: string, replace: string}, $files: {add: string, remove: string}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $files: {add: string, remove: string}}",
 		)
 	})
 
@@ -78,7 +78,7 @@ func TestContactUpdate(t *testing.T) {
 			"  $account:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $files:\n" +
 			"    add: string\n" +
 			"    remove: string\n")

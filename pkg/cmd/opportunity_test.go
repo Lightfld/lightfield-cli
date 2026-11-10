@@ -61,7 +61,7 @@ func TestOpportunityUpdate(t *testing.T) {
 			"opportunity", "update",
 			"--id", "id",
 			"--fields", "{$name: $name, $stage: $stage}",
-			"--relationships", "{$champion: {add: string, remove: string, replace: string}, $evaluator: {add: string, remove: string, replace: string}, $files: {add: string, remove: string}, $opportunity-slack-channel: {add: string, remove: string, replace: string}, $owner: {add: string, remove: string, replace: string}}",
+			"--relationships", "{$champion: {add: string, remove: string, replace: replace}, $evaluator: {add: string, remove: string, replace: replace}, $files: {add: string, remove: string}, $opportunity-slack-channel: {add: string, remove: string, replace: replace}, $owner: {add: string, remove: string, replace: replace}}",
 		)
 	})
 
@@ -75,22 +75,22 @@ func TestOpportunityUpdate(t *testing.T) {
 			"  $champion:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $evaluator:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $files:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"  $opportunity-slack-channel:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n" +
+			"    replace: replace\n" +
 			"  $owner:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
-			"    replace: string\n")
+			"    replace: replace\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
