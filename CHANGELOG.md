@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/Lightfld/lightfield-cli/compare/v0.7.0...v0.8.0) (2026-11-10)
+
+
+### Chores
+
+* release 0.8.0 ([15af271](https://github.com/Lightfld/lightfield-cli/commit/15af271ce925d6b390aef921f3f024182a4154c7))
+
 ## 0.7.0 (2026-08-06)
 
 Full Changelog: [v0.6.0...v0.7.0](https://github.com/Lightfld/lightfield-cli/compare/v0.6.0...v0.7.0)
