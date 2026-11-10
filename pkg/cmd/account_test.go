@@ -17,6 +17,7 @@ func TestAccountCreate(t *testing.T) {
 			"account", "create",
 			"--fields", "{$name: $name, $facebook: $facebook, $headcount: $headcount, $industry: [string], $instagram: $instagram, $lastFundingType: $lastFundingType, $linkedIn: $linkedIn, $primaryAddress: {city: city, country: country, latitude: 0, longitude: 0, postalCode: postalCode, state: state, street: street, street2: street2}, $twitter: $twitter, $website: [string]}",
 			"--relationships", "{$account-slack-channel: string, $contact: string, $files: string, $owner: string}",
+			"--skip-enrichment=true",
 		)
 	})
 
@@ -48,7 +49,8 @@ func TestAccountCreate(t *testing.T) {
 			"  $account-slack-channel: string\n" +
 			"  $contact: string\n" +
 			"  $files: string\n" +
-			"  $owner: string\n")
+			"  $owner: string\n" +
+			"skipEnrichment: true\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -137,6 +139,7 @@ func TestAccountList(t *testing.T) {
 			"account", "list",
 			"--limit", "1",
 			"--offset", "0",
+			"--status", "active",
 		)
 	})
 }
@@ -197,6 +200,42 @@ func TestAccountFieldHistory(t *testing.T) {
 			"--field-key", "fieldKey",
 			"--after", "after",
 			"--limit", "1",
+		)
+	})
+}
+
+func TestAccountRestore(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"account", "restore",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(accountRestore)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"account", "restore",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"account", "restore",
+			"--id", "id",
 		)
 	})
 }

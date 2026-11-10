@@ -108,6 +108,7 @@ func TestOpportunityList(t *testing.T) {
 			"opportunity", "list",
 			"--limit", "1",
 			"--offset", "0",
+			"--status", "active",
 		)
 	})
 }
@@ -168,6 +169,42 @@ func TestOpportunityFieldHistory(t *testing.T) {
 			"--field-key", "fieldKey",
 			"--after", "after",
 			"--limit", "1",
+		)
+	})
+}
+
+func TestOpportunityRestore(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"opportunity", "restore",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(opportunityRestore)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"opportunity", "restore",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"opportunity", "restore",
+			"--id", "id",
 		)
 	})
 }

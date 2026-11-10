@@ -39,7 +39,7 @@ var fileCreate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "purpose",
-			Usage:    "Optional validation hint. When provided, the server enforces purpose-specific MIME type and file size constraints. Use `meeting_transcript` for files that will be attached to a meeting as its transcript. Use `knowledge_user` or `knowledge_workspace` to add the file to the authenticated user's or workspace's Knowledge, making it available to the AI assistant. Not persisted or returned in responses.",
+			Usage:    "Optional validation hint. When provided, the server enforces purpose-specific MIME type and file size constraints. Use `meeting_transcript` for files that will be attached to a meeting as its transcript. Use `meeting_recording` for the audio or video of an uploaded meeting recording (MP4, WebM, QuickTime, MP3, M4A, WAV or OGG). Use `knowledge_user` or `knowledge_workspace` to stage an upload for the authenticated user or workspace. Completing the upload does not add it to Knowledge; promote it separately through the agent or Knowledge workflow. Use `contact_avatar` for an image that will be set as a contact photo through the contact `$profilePhotoUrl` field. Not returned in responses.",
 			BodyPath: "purpose",
 		},
 	},
@@ -65,7 +65,7 @@ var fileRetrieve = cli.Command{
 
 var fileList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of files in your workspace. Use `offset` and `limit` to\npaginate through results. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
+	Usage:   "Returns a paginated list of files in your workspace. Results are sorted by when\nthe record was created in Lightfield (`createdAt`), newest first. Use `offset`\nand `limit` to paginate through results. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
@@ -126,7 +126,7 @@ var fileComplete = cli.Command{
 
 var fileURL = cli.Command{
 	Name:    "url",
-	Usage:   "Returns a temporary download URL for the file. Only available for files in\n`COMPLETED` status.",
+	Usage:   "Returns a temporary download URL for the file. Only available for files in\n`COMPLETED` status. Works for any retrievable file id, including files uploaded\nthrough the app.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

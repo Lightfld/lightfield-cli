@@ -32,7 +32,7 @@ var messageRetrieve = cli.Command{
 
 var messageList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of messages. Use `offset` and `limit` to paginate\nthrough results. Each message is filtered per caller to those whose channel they\nmay see, and includes a read-only `accessLevel`. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
+	Usage:   "Returns a paginated list of messages. Results are sorted by when the record was\ncreated in Lightfield (`createdAt`), newest first. This is not the time the\nmessage was sent. Use `offset` and `limit` to paginate through results. Each\nmessage is filtered per caller to those whose channel they may see, and includes\na read-only `accessLevel`. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{

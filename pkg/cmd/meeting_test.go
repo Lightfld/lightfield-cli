@@ -85,8 +85,8 @@ func TestMeetingUpdate(t *testing.T) {
 			"--api-key", "string",
 			"meeting", "update",
 			"--id", "id",
-			"--fields", "{$privacySetting: FULL}",
-			"--relationships", "{$transcript: {replace: replace}}",
+			"--fields", "{$attendeeEmails: [string], $meetingPrep: $meetingPrep, $postMeetingSummary: $postMeetingSummary, $privacySetting: FULL}",
+			"--relationships", "{$transcript: {remove: remove, replace: replace}}",
 		)
 	})
 
@@ -100,8 +100,11 @@ func TestMeetingUpdate(t *testing.T) {
 			"--api-key", "string",
 			"meeting", "update",
 			"--id", "id",
+			"--fields.attendee-emails", "[string]",
+			"--fields.meeting-prep", "$meetingPrep",
+			"--fields.post-meeting-summary", "$postMeetingSummary",
 			"--fields.privacy-setting", "FULL",
-			"--relationships.transcript", "{replace: replace}",
+			"--relationships.transcript", "{remove: remove, replace: replace}",
 		)
 	})
 
@@ -109,9 +112,14 @@ func TestMeetingUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"fields:\n" +
+			"  $attendeeEmails:\n" +
+			"    - string\n" +
+			"  $meetingPrep: $meetingPrep\n" +
+			"  $postMeetingSummary: $postMeetingSummary\n" +
 			"  $privacySetting: FULL\n" +
 			"relationships:\n" +
 			"  $transcript:\n" +
+			"    remove: remove\n" +
 			"    replace: replace\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
@@ -130,6 +138,7 @@ func TestMeetingList(t *testing.T) {
 			"meeting", "list",
 			"--limit", "1",
 			"--offset", "0",
+			"--status", "active",
 		)
 	})
 }
@@ -170,12 +179,127 @@ func TestMeetingDelete(t *testing.T) {
 	})
 }
 
+func TestMeetingCreateRecording(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"meeting", "create-recording",
+			"--id", "id",
+			"--transcript-file-id", "transcriptFileId",
+			"--is-canonical=true",
+			"--media-file-id", "mediaFileId",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("" +
+			"transcriptFileId: transcriptFileId\n" +
+			"isCanonical: true\n" +
+			"mediaFileId: mediaFileId\n")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"meeting", "create-recording",
+			"--id", "id",
+		)
+	})
+}
+
 func TestMeetingDefinitions(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
 			"meeting", "definitions",
+		)
+	})
+}
+
+func TestMeetingListRecordings(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"meeting", "list-recordings",
+			"--id", "id",
+		)
+	})
+}
+
+func TestMeetingRestore(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"meeting", "restore",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(meetingRestore)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"meeting", "restore",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"meeting", "restore",
+			"--id", "id",
+		)
+	})
+}
+
+func TestMeetingRetrieveRecording(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"meeting", "retrieve-recording",
+			"--id", "id",
+			"--recording-id", "recordingId",
+		)
+	})
+}
+
+func TestMeetingUpdateRecording(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"meeting", "update-recording",
+			"--id", "id",
+			"--recording-id", "recordingId",
+			"--is-canonical=true",
+			"--media-file-id", "mediaFileId",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("" +
+			"isCanonical: true\n" +
+			"mediaFileId: mediaFileId\n")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"meeting", "update-recording",
+			"--id", "id",
+			"--recording-id", "recordingId",
 		)
 	})
 }

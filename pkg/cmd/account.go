@@ -21,7 +21,7 @@ var accountCreate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values for the new account. System fields use a `$` prefix (e.g. `$name`, `$website`); custom attributes use their bare slug (e.g. `tier`, `renewalDate`). Required: `$name` (string). Fields of type `SINGLE_SELECT` or `MULTI_SELECT` accept either an option ID or label from the field's `typeConfiguration.options` — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> to discover available fields and options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values for the new account. System fields use a `$` prefix (e.g. `$name`, `$website`); custom attributes use their bare slug (e.g. `tier`, `renewalDate`). Required: `$name` (string). Fields of type `SINGLE_SELECT` or `MULTI_SELECT` accept either an option ID or label from the field's `typeConfiguration.options` — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> to discover available fields and options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.\n\nRead definitions for the object type’s configured `$pipeline` and `$stage` fields and options. See <u>[Pipelines and stages](/using-the-api/fields-and-relationships/#pipelines-and-stages)</u> for write rules.",
 			Required: true,
 			BodyPath: "fields",
 		},
@@ -30,6 +30,11 @@ var accountCreate = cli.Command{
 			Usage:    "Relationships to set on the new account. System relationships use a `$` prefix (e.g. `$owner`, `$contact`); custom relationships use their bare slug. Each value is a single entity ID or an array of IDs. Call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> to list available relationship keys.",
 			BodyPath: "relationships",
 		},
+		&requestflag.Flag[bool]{
+			Name:     "skip-enrichment",
+			Usage:    "Skip background data enrichment for this account creation. The account summary and how-they-make-money field are still generated. Defaults to false. Enrichment is a metered event, so when bulk-loading 50 or more records that do not require additional enrichment, we recommend `true`.",
+			BodyPath: "skipEnrichment",
+		},
 	},
 	Action:          handleAccountCreate,
 	HideHelpCommand: true,
@@ -37,7 +42,7 @@ var accountCreate = cli.Command{
 
 var accountRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieves a single account by its ID.",
+	Usage:   "Retrieves a single account by its ID. A record you may see by name only is\nreturned as `{ id, restricted: { name, reason } }`, with no `fields` or\n`relationships`; check for `restricted` before reading them.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -64,7 +69,7 @@ var accountUpdate = cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$name`); custom attributes use their bare slug. `SINGLE_SELECT` and `MULTI_SELECT` fields accept an option ID or label — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> for available options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$name`); custom attributes use their bare slug. `SINGLE_SELECT` and `MULTI_SELECT` fields accept an option ID or label — call the <u>[definitions endpoint](/api/resources/account/methods/definitions)</u> for available options. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.\n\nRead definitions for the object type’s configured `$pipeline` and `$stage` fields and options. See <u>[Pipelines and stages](/using-the-api/fields-and-relationships/#pipelines-and-stages)</u> for write rules.",
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -79,7 +84,7 @@ var accountUpdate = cli.Command{
 
 var accountList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of accounts. Use `offset` and `limit` to paginate\nthrough results, and `$field` query parameters to filter. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout <u>[pagination](/using-the-api/list-endpoints/#pagination)</u> and\n<u>[filtering](/using-the-api/list-endpoints/#filtering)</u>.",
+	Usage:   "Returns a paginated list of accounts. Results are sorted by when the record was\ncreated in Lightfield (`createdAt`), newest first. Each page holds only the\nrecords you can currently read, so a page can contain fewer records than\n`limit`, or none, while more remain, and `totalCount` can include records you\ncan no longer read. To read every record, keep advancing `offset` by `limit`\nuntil it reaches `totalCount`; do not stop at a short or empty page. Use\n`offset` and `limit` to paginate through results, and `$field` query parameters\nto filter. Pass `status=trashed` to list accounts currently in the trash instead\nof live records. Listing trashed records additionally requires the\n`accounts:restore` scope. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout <u>[pagination](/using-the-api/list-endpoints/#pagination)</u> and\n<u>[filtering](/using-the-api/list-endpoints/#filtering)</u>.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
@@ -91,6 +96,11 @@ var accountList = cli.Command{
 			Name:      "offset",
 			Usage:     "Number of records to skip for pagination. Defaults to 0.",
 			QueryPath: "offset",
+		},
+		&requestflag.Flag[string]{
+			Name:      "status",
+			Usage:     "Which records to return by trash state. Defaults to \"active\". Use \"trashed\" to list records currently in the trash; this additionally requires this resource's `restore` scope.",
+			QueryPath: "status",
 		},
 	},
 	Action:          handleAccountList,
@@ -128,7 +138,7 @@ var accountDefinitions = cli.Command{
 
 var accountFieldHistory = cli.Command{
 	Name:    "field-history",
-	Usage:   "Returns the value-change history for a single field on a record, newest first.\nConsecutive identical values are collapsed. History is cursor-paginated: pass\n`nextCursor` from the previous response as `after` to page through older values.\nOnly attribute-backed fields (custom attributes and attribute-backed system\nfields) have history — column-backed system fields return an error.",
+	Usage:   "Returns the value-change history for a single field on a record, newest first.\nConsecutive identical values are collapsed. History is cursor-paginated: pass\n`nextCursor` from the previous response as `after` to page through older values.\nOnly attribute-backed fields (custom attributes and attribute-backed system\nfields) have history — column-backed system fields return an error. A record you\nmay see by name only has no visible history and returns 404, like a record that\ndoes not exist.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -155,6 +165,26 @@ var accountFieldHistory = cli.Command{
 		},
 	},
 	Action:          handleAccountFieldHistory,
+	HideHelpCommand: true,
+}
+
+var accountRestore = cli.Command{
+	Name:    "restore",
+	Usage:   "Restores a trashed account, bringing it back to active. Find trashed accounts\nvia `GET /v1/accounts?status=trashed`.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the account to restore.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "body",
+			BodyRoot: true,
+		},
+	},
+	Action:          handleAccountRestore,
 	HideHelpCommand: true,
 }
 
@@ -466,6 +496,55 @@ func handleAccountFieldHistory(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "account field-history",
+		Transform:      transform,
+	})
+}
+
+func handleAccountRestore(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.AccountRestoreParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Account.Restore(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "account restore",
 		Transform:      transform,
 	})
 }

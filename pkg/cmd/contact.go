@@ -21,7 +21,7 @@ var contactCreate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values for the new contact. System fields use a `$` prefix (e.g. `$email`, `$name`); custom attributes use their bare slug. Note: `$name` is an object `{ firstName, lastName }`, not a plain string. Call the <u>[definitions endpoint](/api/resources/contact/methods/definitions)</u> to discover available fields and their types. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values for the new contact. System fields use a `$` prefix (e.g. `$email`, `$name`); custom attributes use their bare slug. Note: `$name` is an object `{ firstName, lastName }`, not a plain string. Call the <u>[definitions endpoint](/api/resources/contact/methods/definitions)</u> to discover available fields and their types. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.\n\nRead definitions for the object type’s configured `$pipeline` and `$stage` fields and options. See <u>[Pipelines and stages](/using-the-api/fields-and-relationships/#pipelines-and-stages)</u> for write rules.",
 			Required: true,
 			BodyPath: "fields",
 		},
@@ -30,6 +30,11 @@ var contactCreate = cli.Command{
 			Usage:    "Relationships to set on the new contact. System relationships use a `$` prefix (e.g. `$account`); custom relationships use their bare slug. Each value is a single entity ID or an array of IDs. Call the <u>[definitions endpoint](/api/resources/contact/methods/definitions)</u> to list available relationship keys.",
 			BodyPath: "relationships",
 		},
+		&requestflag.Flag[bool]{
+			Name:     "skip-enrichment",
+			Usage:    "Skip background enrichment for this contact creation. Defaults to false. Enrichment is a metered event, so when bulk-loading 50 or more records that do not require additional enrichment, we recommend `true`.",
+			BodyPath: "skipEnrichment",
+		},
 	},
 	Action:          handleContactCreate,
 	HideHelpCommand: true,
@@ -37,7 +42,7 @@ var contactCreate = cli.Command{
 
 var contactRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieves a single contact by its ID.",
+	Usage:   "Retrieves a single contact by its ID. A record you may see by name only is\nreturned as `{ id, restricted: { name, reason } }`, with no `fields` or\n`relationships`; check for `restricted` before reading them.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -64,7 +69,7 @@ var contactUpdate = cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$email`); custom attributes use their bare slug. Note: `$name` is an object `{ firstName, lastName }`, not a plain string. Call the <u>[definitions endpoint](/api/resources/contact/methods/definitions)</u> for available fields and types. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.",
+			Usage:    "Field values to update — only provided fields are modified; omitted fields are left unchanged. System fields use a `$` prefix (e.g. `$email`); custom attributes use their bare slug. Note: `$name` is an object `{ firstName, lastName }`, not a plain string. Call the <u>[definitions endpoint](/api/resources/contact/methods/definitions)</u> for available fields and types. See <u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for value type details.\n\nRead definitions for the object type’s configured `$pipeline` and `$stage` fields and options. See <u>[Pipelines and stages](/using-the-api/fields-and-relationships/#pipelines-and-stages)</u> for write rules.",
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -79,7 +84,7 @@ var contactUpdate = cli.Command{
 
 var contactList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of contacts. Use `offset` and `limit` to paginate\nthrough results, and `$field` query parameters to filter. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout <u>[pagination](/using-the-api/list-endpoints/#pagination)</u> and\n<u>[filtering](/using-the-api/list-endpoints/#filtering)</u>.",
+	Usage:   "Returns a paginated list of contacts. Results are sorted by when the record was\ncreated in Lightfield (`createdAt`), newest first. Each page holds only the\nrecords you can currently read, so a page can contain fewer records than\n`limit`, or none, while more remain, and `totalCount` can include records you\ncan no longer read. To read every record, keep advancing `offset` by `limit`\nuntil it reaches `totalCount`; do not stop at a short or empty page. Use\n`offset` and `limit` to paginate through results, and `$field` query parameters\nto filter. Pass `status=trashed` to list contacts currently in the trash instead\nof live records. Listing trashed records additionally requires the\n`contacts:restore` scope. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout <u>[pagination](/using-the-api/list-endpoints/#pagination)</u> and\n<u>[filtering](/using-the-api/list-endpoints/#filtering)</u>.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
@@ -91,6 +96,11 @@ var contactList = cli.Command{
 			Name:      "offset",
 			Usage:     "Number of records to skip for pagination. Defaults to 0.",
 			QueryPath: "offset",
+		},
+		&requestflag.Flag[string]{
+			Name:      "status",
+			Usage:     "Which records to return by trash state. Defaults to \"active\". Use \"trashed\" to list records currently in the trash; this additionally requires this resource's `restore` scope.",
+			QueryPath: "status",
 		},
 	},
 	Action:          handleContactList,
@@ -128,7 +138,7 @@ var contactDefinitions = cli.Command{
 
 var contactFieldHistory = cli.Command{
 	Name:    "field-history",
-	Usage:   "Returns the value-change history for a single field on a record, newest first.\nConsecutive identical values are collapsed. History is cursor-paginated: pass\n`nextCursor` from the previous response as `after` to page through older values.\nOnly attribute-backed fields (custom attributes and attribute-backed system\nfields) have history — column-backed system fields return an error.",
+	Usage:   "Returns the value-change history for a single field on a record, newest first.\nConsecutive identical values are collapsed. History is cursor-paginated: pass\n`nextCursor` from the previous response as `after` to page through older values.\nOnly attribute-backed fields (custom attributes and attribute-backed system\nfields) have history — column-backed system fields return an error. A record you\nmay see by name only has no visible history and returns 404, like a record that\ndoes not exist.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -155,6 +165,26 @@ var contactFieldHistory = cli.Command{
 		},
 	},
 	Action:          handleContactFieldHistory,
+	HideHelpCommand: true,
+}
+
+var contactRestore = cli.Command{
+	Name:    "restore",
+	Usage:   "Restores a trashed contact, bringing it back to active. Find trashed contacts\nvia `GET /v1/contacts?status=trashed`.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the contact to restore.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "body",
+			BodyRoot: true,
+		},
+	},
+	Action:          handleContactRestore,
 	HideHelpCommand: true,
 }
 
@@ -466,6 +496,55 @@ func handleContactFieldHistory(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "contact field-history",
+		Transform:      transform,
+	})
+}
+
+func handleContactRestore(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.ContactRestoreParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Contact.Restore(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "contact restore",
 		Transform:      transform,
 	})
 }

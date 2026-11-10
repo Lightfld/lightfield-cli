@@ -52,7 +52,7 @@ var listCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "fields.kind",
-			Usage:      "Product-level list purpose. Normally omit to create a regular list; reserve `target` for the single account-prioritization (APG) demand list per org, and only for account/contact lists.",
+			Usage:      "Product-level list purpose. Normally leave unset for a regular list; reserve `target` for target lists (a workspace can have several), and only for account/contact lists.",
 			InnerField: "$kind",
 		},
 	},
@@ -124,7 +124,7 @@ var listUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "fields.kind",
-			Usage:      "Product-level list purpose. Normally leave unset; reserve `target` for the single account-prioritization (APG) demand list per org (account/contact lists only). Pass null to clear.",
+			Usage:      "Product-level list purpose. Normally leave unset for a regular list; reserve `target` for target lists (a workspace can have several), and only for account/contact lists. Pass null to clear.",
 			InnerField: "$kind",
 		},
 		&requestflag.InnerFlag[string]{
@@ -154,7 +154,7 @@ var listUpdate = requestflag.WithInnerFlags(cli.Command{
 
 var listList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of lists. Use `offset` and `limit` to paginate through\nresults. See <u>[List endpoints](/using-the-api/list-endpoints/)</u> for more\ninformation about pagination.",
+	Usage:   "Returns a paginated list of lists. Results are sorted by when the record was\ncreated in Lightfield (`createdAt`), newest first. A list archived together with\nits object definition is not returned, for any caller, including admins and\nworkspace API keys. Use `offset` and `limit` to paginate through results. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
@@ -194,7 +194,7 @@ var listDelete = cli.Command{
 
 var listListAccounts = cli.Command{
 	Name:    "list-accounts",
-	Usage:   "Returns a paginated list of accounts that belong to the specified list.",
+	Usage:   "Returns a paginated list of accounts that belong to the specified list. Results\nare sorted by when the record was created in Lightfield (`createdAt`), newest\nfirst. Each page holds only the records you can currently read, so a page can\ncontain fewer records than `limit`, or none, while more remain, and `totalCount`\ncan include records you can no longer read. To read every record, keep advancing\n`offset` by `limit` until it reaches `totalCount`; do not stop at a short or\nempty page.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -220,7 +220,7 @@ var listListAccounts = cli.Command{
 
 var listListContacts = cli.Command{
 	Name:    "list-contacts",
-	Usage:   "Returns a paginated list of contacts that belong to the specified list.",
+	Usage:   "Returns a paginated list of contacts that belong to the specified list. Results\nare sorted by when the record was created in Lightfield (`createdAt`), newest\nfirst. Each page holds only the records you can currently read, so a page can\ncontain fewer records than `limit`, or none, while more remain, and `totalCount`\ncan include records you can no longer read. To read every record, keep advancing\n`offset` by `limit` until it reaches `totalCount`; do not stop at a short or\nempty page.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -246,7 +246,7 @@ var listListContacts = cli.Command{
 
 var listListOpportunities = cli.Command{
 	Name:    "list-opportunities",
-	Usage:   "Returns a paginated list of opportunities that belong to the specified list.",
+	Usage:   "Returns a paginated list of opportunities that belong to the specified list.\nResults are sorted by when the record was created in Lightfield (`createdAt`),\nnewest first. Each page holds only the records you can currently read, so a page\ncan contain fewer records than `limit`, or none, while more remain, and\n`totalCount` can include records you can no longer read. To read every record,\nkeep advancing `offset` by `limit` until it reaches `totalCount`; do not stop at\na short or empty page.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

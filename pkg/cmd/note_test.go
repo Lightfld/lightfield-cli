@@ -16,7 +16,7 @@ func TestNoteCreate(t *testing.T) {
 			"--api-key", "string",
 			"note", "create",
 			"--fields", "{$title: $title, $content: $content}",
-			"--relationships", "{$account: string, $contact: string, $opportunity: string}",
+			"--relationships", "{$account: string, $contact: string, $meeting: string, $opportunity: string}",
 		)
 	})
 
@@ -31,7 +31,7 @@ func TestNoteCreate(t *testing.T) {
 			"note", "create",
 			"--fields.title", "$title",
 			"--fields.content", "$content",
-			"--relationships", "{$account: string, $contact: string, $opportunity: string}",
+			"--relationships", "{$account: string, $contact: string, $meeting: string, $opportunity: string}",
 		)
 	})
 
@@ -44,6 +44,7 @@ func TestNoteCreate(t *testing.T) {
 			"relationships:\n" +
 			"  $account: string\n" +
 			"  $contact: string\n" +
+			"  $meeting: string\n" +
 			"  $opportunity: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
@@ -72,7 +73,7 @@ func TestNoteUpdate(t *testing.T) {
 			"note", "update",
 			"--id", "id",
 			"--fields", "{$content: $content, $title: $title}",
-			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $contact: {add: string, remove: string, replace: replace}, $opportunity: {add: string, remove: string, replace: replace}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $contact: {add: string, remove: string, replace: replace}, $meeting: {add: string, remove: string, replace: replace}, $opportunity: {add: string, remove: string, replace: replace}}",
 		)
 	})
 
@@ -88,7 +89,7 @@ func TestNoteUpdate(t *testing.T) {
 			"--id", "id",
 			"--fields.content", "$content",
 			"--fields.title", "$title",
-			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $contact: {add: string, remove: string, replace: replace}, $opportunity: {add: string, remove: string, replace: replace}}",
+			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $contact: {add: string, remove: string, replace: replace}, $meeting: {add: string, remove: string, replace: replace}, $opportunity: {add: string, remove: string, replace: replace}}",
 		)
 	})
 
@@ -104,6 +105,10 @@ func TestNoteUpdate(t *testing.T) {
 			"    remove: string\n" +
 			"    replace: replace\n" +
 			"  $contact:\n" +
+			"    add: string\n" +
+			"    remove: string\n" +
+			"    replace: replace\n" +
+			"  $meeting:\n" +
 			"    add: string\n" +
 			"    remove: string\n" +
 			"    replace: replace\n" +
@@ -128,6 +133,7 @@ func TestNoteList(t *testing.T) {
 			"note", "list",
 			"--limit", "1",
 			"--offset", "0",
+			"--status", "active",
 		)
 	})
 }
@@ -174,6 +180,42 @@ func TestNoteDefinitions(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"note", "definitions",
+		)
+	})
+}
+
+func TestNoteRestore(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"note", "restore",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(noteRestore)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"note", "restore",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"note", "restore",
+			"--id", "id",
 		)
 	})
 }

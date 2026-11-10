@@ -32,7 +32,7 @@ var mergeGetMerge = cli.Command{
 
 var mergeMergeAccounts = requestflag.WithInnerFlags(cli.Command{
 	Name:    "merge-accounts",
-	Usage:   "Merges two accounts into one. The primary account retains its ID; the duplicate\nis soft-deleted.",
+	Usage:   "Requires an `Idempotency-Key` header. Use a new key for each intended merge and\nreuse it only when retrying the same merge; a missing header returns 400.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -71,7 +71,7 @@ var mergeMergeAccounts = requestflag.WithInnerFlags(cli.Command{
 
 var mergeMergeContacts = requestflag.WithInnerFlags(cli.Command{
 	Name:    "merge-contacts",
-	Usage:   "Merges two contacts into one. The primary contact retains its ID; the duplicate\nis soft-deleted.",
+	Usage:   "Requires an `Idempotency-Key` header. Use a new key for each intended merge and\nreuse it only when retrying the same merge; a missing header returns 400.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -110,7 +110,7 @@ var mergeMergeContacts = requestflag.WithInnerFlags(cli.Command{
 
 var mergeMergeObjectValues = requestflag.WithInnerFlags(cli.Command{
 	Name:    "merge-object-values",
-	Usage:   "Merges two records of the specified custom object type into one. The primary\nrecord retains its ID; the duplicate is soft-deleted. Both records must belong\nto the custom object type named in the path.",
+	Usage:   "Requires an `Idempotency-Key` header. Use a new key for each intended merge and\nreuse it only when retrying the same merge; a missing header returns 400.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -155,7 +155,7 @@ var mergeMergeObjectValues = requestflag.WithInnerFlags(cli.Command{
 
 var mergeMergeOpportunities = requestflag.WithInnerFlags(cli.Command{
 	Name:    "merge-opportunities",
-	Usage:   "Merges two opportunities into one. The primary opportunity retains its ID; the\nduplicate is soft-deleted. Both opportunities must belong to the same account.",
+	Usage:   "Requires an `Idempotency-Key` header. Use a new key for each intended merge and\nreuse it only when retrying the same merge; a missing header returns 400.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

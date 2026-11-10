@@ -16,7 +16,7 @@ import (
 
 var workflowRunStatus = cli.Command{
 	Name:    "status",
-	Usage:   "Returns the current status of a workflow run.",
+	Usage:   "Returns the current status of a workflow run. This endpoint does not require\nauthentication: possession of the run ID grants access to its status, so keep\nrun IDs private. No run inputs, outputs or workspace details are returned.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

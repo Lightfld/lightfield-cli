@@ -15,8 +15,9 @@ func TestContactCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"contact", "create",
-			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
+			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $phone: [string], $profilePhotoUrl: $profilePhotoUrl}",
 			"--relationships", "{$account: string, $files: string}",
+			"--skip-enrichment=true",
 		)
 	})
 
@@ -29,10 +30,13 @@ func TestContactCreate(t *testing.T) {
 			"  $name:\n" +
 			"    firstName: firstName\n" +
 			"    lastName: lastName\n" +
+			"  $phone:\n" +
+			"    - string\n" +
 			"  $profilePhotoUrl: $profilePhotoUrl\n" +
 			"relationships:\n" +
 			"  $account: string\n" +
-			"  $files: string\n")
+			"  $files: string\n" +
+			"skipEnrichment: true\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -59,7 +63,7 @@ func TestContactUpdate(t *testing.T) {
 			"--api-key", "string",
 			"contact", "update",
 			"--id", "id",
-			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $profilePhotoUrl: $profilePhotoUrl}",
+			"--fields", "{$email: [string], $name: {firstName: firstName, lastName: lastName}, $phone: [string], $profilePhotoUrl: $profilePhotoUrl}",
 			"--relationships", "{$account: {add: string, remove: string, replace: replace}, $files: {add: string, remove: string}}",
 		)
 	})
@@ -73,6 +77,8 @@ func TestContactUpdate(t *testing.T) {
 			"  $name:\n" +
 			"    firstName: firstName\n" +
 			"    lastName: lastName\n" +
+			"  $phone:\n" +
+			"    - string\n" +
 			"  $profilePhotoUrl: $profilePhotoUrl\n" +
 			"relationships:\n" +
 			"  $account:\n" +
@@ -99,6 +105,7 @@ func TestContactList(t *testing.T) {
 			"contact", "list",
 			"--limit", "1",
 			"--offset", "0",
+			"--status", "active",
 		)
 	})
 }
@@ -159,6 +166,42 @@ func TestContactFieldHistory(t *testing.T) {
 			"--field-key", "fieldKey",
 			"--after", "after",
 			"--limit", "1",
+		)
+	})
+}
+
+func TestContactRestore(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"contact", "restore",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(contactRestore)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"contact", "restore",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"contact", "restore",
+			"--id", "id",
 		)
 	})
 }

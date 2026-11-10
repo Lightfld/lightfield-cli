@@ -84,7 +84,7 @@ var meetingCreate = requestflag.WithInnerFlags(cli.Command{
 	"relationships": {
 		&requestflag.InnerFlag[any]{
 			Name:       "relationships.transcript",
-			Usage:      "The ID of the file to attach as the meeting transcript when creating the meeting. Only one transcript can be attached to a meeting.",
+			Usage:      "The file ID to attach and set as the meeting canonical transcript.",
 			InnerField: "$transcript",
 		},
 	},
@@ -92,7 +92,7 @@ var meetingCreate = requestflag.WithInnerFlags(cli.Command{
 
 var meetingRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieves a single meeting by its ID. Meeting fields and transcript visibility\nare redacted based on the caller-specific privacy resolution, and the response\nincludes a read-only `accessLevel`.",
+	Usage:   "Retrieves a single meeting by its ID. `$transcript` is the file ID of the\ncanonical transcript. `$transcripts` lists the file ID of every transcript on\nthe meeting. `$note` lists the note IDs attached to the meeting. Meeting fields\nand transcript visibility are redacted based on the caller-specific privacy\nresolution, and the response includes a read-only `accessLevel`.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -119,12 +119,12 @@ var meetingUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "fields",
-			Usage:    "Field values to update. Only `$privacySetting` is writable, and omitted fields are left unchanged.",
+			Usage:    "Field values to update. Only `$privacySetting`, `$attendeeEmails`, `$meetingPrep` and `$postMeetingSummary` are writable, and omitted fields are left unchanged.",
 			BodyPath: "fields",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "relationships",
-			Usage:    "Relationship operations to apply. Only `$transcript.replace` is supported; removing or clearing `$transcript` is not supported.",
+			Usage:    "Relationship operations to apply. Only `$transcript`, with exactly one of `replace` or `remove`, is supported; clearing `$transcript` is not supported.",
 			BodyPath: "relationships",
 		},
 	},
@@ -132,6 +132,21 @@ var meetingUpdate = requestflag.WithInnerFlags(cli.Command{
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
 	"fields": {
+		&requestflag.InnerFlag[[]string]{
+			Name:       "fields.attendee-emails",
+			Usage:      "The full list of attendee email addresses, up to 500. Only meetings that have ended can be edited.",
+			InnerField: "$attendeeEmails",
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "fields.meeting-prep",
+			Usage:      "The meeting prep, as Markdown. Lightfield regenerates it as new activity arrives, which replaces an edit; null or an empty string clears it until then.",
+			InnerField: "$meetingPrep",
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "fields.post-meeting-summary",
+			Usage:      "The meeting summary, as Markdown. Lightfield regenerates it as new activity arrives, which replaces an edit; null or an empty string clears it until then.",
+			InnerField: "$postMeetingSummary",
+		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "fields.privacy-setting",
 			Usage:      "The privacy setting for the meeting.",
@@ -148,7 +163,7 @@ var meetingUpdate = requestflag.WithInnerFlags(cli.Command{
 
 var meetingList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of meetings. Use `offset` and `limit` to paginate\nthrough results. Each meeting is privacy-filtered per caller, includes a\nread-only `accessLevel`, and may redact transcript or content fields based on\nthe caller-specific privacy resolution. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
+	Usage:   "Returns a paginated list of meetings. Results are sorted by when the record was\ncreated in Lightfield (`createdAt`), newest first. This is not the meeting start\ntime. Use `offset` and `limit` to paginate through results. Each meeting is\nprivacy-filtered per caller, includes a read-only `accessLevel`, and may redact\ntranscript or content fields based on the caller-specific privacy resolution. As\nin the Lightfield app, a meeting is listed only when it is internal-only or\nlinked to an account or an active contact; this applies to every caller,\nincluding admins and workspace API keys. Pass `status=trashed` to list meetings\ncurrently in the trash instead of live records. Listing trashed records\nadditionally requires the `meetings:restore` scope. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
@@ -160,6 +175,11 @@ var meetingList = cli.Command{
 			Name:      "offset",
 			Usage:     "Number of records to skip for pagination. Defaults to 0.",
 			QueryPath: "offset",
+		},
+		&requestflag.Flag[string]{
+			Name:      "status",
+			Usage:     "Which records to return by trash state. Defaults to \"active\". Use \"trashed\" to list records currently in the trash; this additionally requires this resource's `restore` scope.",
+			QueryPath: "status",
 		},
 	},
 	Action:          handleMeetingList,
@@ -186,12 +206,135 @@ var meetingDelete = cli.Command{
 	HideHelpCommand: true,
 }
 
+var meetingCreateRecording = cli.Command{
+	Name:    "create-recording",
+	Usage:   "A recording is one session of the meeting: its transcript and, when there is\none, its audio or video. Recordings come from the Lightfield notetaker, Gong,\nGranola, or an upload. Only uploaded recordings can be created or given media\nthrough the API. Creates an uploaded recording from files already uploaded\nthrough `POST /v1/files`: a transcript (purpose `meeting_transcript`, required)\nand optionally its audio or video (purpose `meeting_recording`). Both files\nattach in one write, so a failed request attaches neither. Media can also be\nadded later by updating the recording. Sending a transcript file that is already\non the meeting returns that recording. Only meeting participants and workspace\nowners may upload.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the meeting.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:     "transcript-file-id",
+			Usage:    "File ID of a completed upload with purpose `meeting_transcript`.",
+			Required: true,
+			BodyPath: "transcriptFileId",
+		},
+		&requestflag.Flag[bool]{
+			Name:     "is-canonical",
+			Usage:    "Pin this as the meeting's primary recording. Defaults to `true`. `false` attaches it without pinning; on a meeting with no pinned recording, the primary is chosen by source (notetaker, Gong, Granola, then uploads) and then recency, so a newer upload can still become primary.",
+			Default:  true,
+			BodyPath: "isCanonical",
+		},
+		&requestflag.Flag[string]{
+			Name:     "media-file-id",
+			Usage:    "File ID of a completed upload with purpose `meeting_recording`. Can also be added later by updating the recording.",
+			BodyPath: "mediaFileId",
+		},
+	},
+	Action:          handleMeetingCreateRecording,
+	HideHelpCommand: true,
+}
+
 var meetingDefinitions = cli.Command{
 	Name:            "definitions",
 	Usage:           "Returns the schema for the field and relationship definitions available on\nmeetings. Useful for understanding the shape of meeting data before creating or\nupdating records. See\n<u>[Fields and relationships](/using-the-api/fields-and-relationships/)</u> for\nmore details.",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
 	Action:          handleMeetingDefinitions,
+	HideHelpCommand: true,
+}
+
+var meetingListRecordings = cli.Command{
+	Name:    "list-recordings",
+	Usage:   "A recording is one session of the meeting: its transcript and, when there is\none, its audio or video. Recordings come from the Lightfield notetaker, Gong,\nGranola, or an upload. Only uploaded recordings can be created or given media\nthrough the API. Returns every recording on the meeting without media URLs;\nretrieve a single recording for its media. Requires full access to the meeting;\na caller who sees only its metadata gets a 403.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the meeting.",
+			Required:  true,
+			PathParam: "id",
+		},
+	},
+	Action:          handleMeetingListRecordings,
+	HideHelpCommand: true,
+}
+
+var meetingRestore = cli.Command{
+	Name:    "restore",
+	Usage:   "Restores a trashed meeting, bringing it back to active. Find trashed meetings\nvia `GET /v1/meetings?status=trashed`.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the meeting to restore.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "body",
+			BodyRoot: true,
+		},
+	},
+	Action:          handleMeetingRestore,
+	HideHelpCommand: true,
+}
+
+var meetingRetrieveRecording = cli.Command{
+	Name:    "retrieve-recording",
+	Usage:   "A recording is one session of the meeting: its transcript and, when there is\none, its audio or video. Recordings come from the Lightfield notetaker, Gong,\nGranola, or an upload. Only uploaded recordings can be created or given media\nthrough the API. Returns the recording with a short-lived `media.url` for its\naudio or video. For notetaker and Gong recordings the URL is fetched from the\nprovider on each call. Requires full access to the meeting; a caller who sees\nonly its metadata gets a 403.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the meeting.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:      "recording-id",
+			Usage:     "Unique identifier of the recording.",
+			Required:  true,
+			PathParam: "recordingId",
+		},
+	},
+	Action:          handleMeetingRetrieveRecording,
+	HideHelpCommand: true,
+}
+
+var meetingUpdateRecording = cli.Command{
+	Name:    "update-recording",
+	Usage:   "A recording is one session of the meeting: its transcript and, when there is\none, its audio or video. Recordings come from the Lightfield notetaker, Gong,\nGranola, or an upload. Only uploaded recordings can be created or given media\nthrough the API. Changes only what is sent. `isCanonical: true` makes the\nrecording the meeting primary, for any provider. `mediaFileId` adds or replaces\nthe audio or video of an uploaded recording; a replaced file is deleted.\nNotetaker, Gong and Granola recordings cannot be given media. Only meeting\nparticipants and workspace owners may update.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the meeting.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:      "recording-id",
+			Usage:     "Unique identifier of the recording.",
+			Required:  true,
+			PathParam: "recordingId",
+		},
+		&requestflag.Flag[bool]{
+			Name:     "is-canonical",
+			Usage:    "`true` pins this as the meeting's primary recording. Works for every provider, but the recording needs a transcript file (`transcript` is not null). `false` is rejected: to move the primary, set it on another recording.",
+			BodyPath: "isCanonical",
+		},
+		&requestflag.Flag[string]{
+			Name:     "media-file-id",
+			Usage:    "File ID of a completed upload with purpose `meeting_recording`. Adds or replaces the media; a replaced file is deleted. Uploaded recordings only.",
+			BodyPath: "mediaFileId",
+		},
+	},
+	Action:          handleMeetingUpdateRecording,
 	HideHelpCommand: true,
 }
 
@@ -417,6 +560,55 @@ func handleMeetingDelete(ctx context.Context, cmd *cli.Command) error {
 	})
 }
 
+func handleMeetingCreateRecording(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.MeetingNewRecordingParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Meeting.NewRecording(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "meeting create-recording",
+		Transform:      transform,
+	})
+}
+
 func handleMeetingDefinitions(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -452,6 +644,199 @@ func handleMeetingDefinitions(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "meeting definitions",
+		Transform:      transform,
+	})
+}
+
+func handleMeetingListRecordings(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Meeting.ListRecordings(ctx, cmd.Value("id").(string), options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "meeting list-recordings",
+		Transform:      transform,
+	})
+}
+
+func handleMeetingRestore(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.MeetingRestoreParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Meeting.Restore(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "meeting restore",
+		Transform:      transform,
+	})
+}
+
+func handleMeetingRetrieveRecording(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("recording-id") && len(unusedArgs) > 0 {
+		cmd.Set("recording-id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.MeetingGetRecordingParams{
+		ID: cmd.Value("id").(string),
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Meeting.GetRecording(
+		ctx,
+		cmd.Value("recording-id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "meeting retrieve-recording",
+		Transform:      transform,
+	})
+}
+
+func handleMeetingUpdateRecording(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("recording-id") && len(unusedArgs) > 0 {
+		cmd.Set("recording-id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.MeetingUpdateRecordingParams{
+		ID: cmd.Value("id").(string),
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Meeting.UpdateRecording(
+		ctx,
+		cmd.Value("recording-id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "meeting update-recording",
 		Transform:      transform,
 	})
 }

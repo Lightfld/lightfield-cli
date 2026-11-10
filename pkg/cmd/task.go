@@ -126,7 +126,7 @@ var taskUpdate = requestflag.WithInnerFlags(cli.Command{
 
 var taskList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of tasks. Use `offset` and `limit` to paginate through\nresults. See <u>[List endpoints](/using-the-api/list-endpoints/)</u> for more\ninformation about pagination.",
+	Usage:   "Returns a paginated list of tasks. Results are sorted by when the record was\ncreated in Lightfield (`createdAt`), newest first. Use `offset` and `limit` to\npaginate through results. Pass `status=trashed` to list tasks currently in the\ntrash instead of live records. Listing trashed records additionally requires the\n`tasks:restore` scope. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
@@ -138,6 +138,11 @@ var taskList = cli.Command{
 			Name:      "offset",
 			Usage:     "Number of records to skip for pagination. Defaults to 0.",
 			QueryPath: "offset",
+		},
+		&requestflag.Flag[string]{
+			Name:      "status",
+			Usage:     "Which records to return by trash state. Defaults to \"active\". Use \"trashed\" to list records currently in the trash; this additionally requires this resource's `restore` scope.",
+			QueryPath: "status",
 		},
 	},
 	Action:          handleTaskList,
@@ -170,6 +175,26 @@ var taskDefinitions = cli.Command{
 	Suggest:         true,
 	Flags:           []cli.Flag{},
 	Action:          handleTaskDefinitions,
+	HideHelpCommand: true,
+}
+
+var taskRestore = cli.Command{
+	Name:    "restore",
+	Usage:   "Restores a trashed task, bringing it back to active. Find trashed tasks via\n`GET /v1/tasks?status=trashed`.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "Unique identifier of the task to restore.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "body",
+			BodyRoot: true,
+		},
+	},
+	Action:          handleTaskRestore,
 	HideHelpCommand: true,
 }
 
@@ -430,6 +455,55 @@ func handleTaskDefinitions(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "task definitions",
+		Transform:      transform,
+	})
+}
+
+func handleTaskRestore(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.TaskRestoreParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Task.Restore(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "task restore",
 		Transform:      transform,
 	})
 }

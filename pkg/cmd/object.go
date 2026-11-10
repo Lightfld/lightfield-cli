@@ -43,7 +43,7 @@ var objectCreate = cli.Command{
 
 var objectRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieves a single record by ID for the specified custom object type.",
+	Usage:   "Retrieves a single record by ID for the specified custom object type. A record\nyou may see by name only is returned as `{ id, restricted: { name, reason } }`,\nwith no `fields` or `relationships`; check for `restricted` before reading them.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -97,7 +97,7 @@ var objectUpdate = cli.Command{
 
 var objectList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of records for the specified custom object type. Use\n`offset` and `limit` to paginate through results, and `$field` query parameters\nto filter. See <u>[List endpoints](/using-the-api/list-endpoints/)</u> for more\ninformation about <u>[pagination](/using-the-api/list-endpoints/#pagination)</u>\nand <u>[filtering](/using-the-api/list-endpoints/#filtering)</u>.",
+	Usage:   "Returns a paginated list of records for the specified custom object type.\nResults are sorted by when the record was created in Lightfield (`createdAt`),\nnewest first. Each page holds only the records you can currently read, so a page\ncan contain fewer records than `limit`, or none, while more remain, and\n`totalCount` can include records you can no longer read. To read every record,\nkeep advancing `offset` by `limit` until it reaches `totalCount`; do not stop at\na short or empty page. Use `offset` and `limit` to paginate through results, and\n`$field` query parameters to filter. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout <u>[pagination](/using-the-api/list-endpoints/#pagination)</u> and\n<u>[filtering](/using-the-api/list-endpoints/#filtering)</u>.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -123,7 +123,7 @@ var objectList = cli.Command{
 
 var objectDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Moves a custom object record to the trash. The record is soft-deleted and may be\nrestored from the Lightfield UI.",
+	Usage:   "Moves a custom object record to the trash. The record is soft-deleted and may be\nrestored with `POST /v1/objects/{entitySlug}/values/{id}/restore`.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -165,7 +165,7 @@ var objectDefinitions = cli.Command{
 
 var objectFieldHistory = cli.Command{
 	Name:    "field-history",
-	Usage:   "Returns the value-change history for a single field on a record, newest first.\nConsecutive identical values are collapsed. History is cursor-paginated: pass\n`nextCursor` from the previous response as `after` to page through older values.\nOnly attribute-backed fields (custom attributes and attribute-backed system\nfields) have history — column-backed system fields return an error.",
+	Usage:   "Returns the value-change history for a single field on a record, newest first.\nConsecutive identical values are collapsed. History is cursor-paginated: pass\n`nextCursor` from the previous response as `after` to page through older values.\nOnly attribute-backed fields (custom attributes and attribute-backed system\nfields) have history — column-backed system fields return an error. A record you\nmay see by name only has no visible history and returns 404, like a record that\ndoes not exist.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -203,10 +203,36 @@ var objectFieldHistory = cli.Command{
 
 var objectListDefinitions = cli.Command{
 	Name:            "list-definitions",
-	Usage:           "Returns all custom object types available to the caller.",
+	Usage:           "Returns all custom object types available to the caller, sorted alphabetically\nby `objectType`.",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
 	Action:          handleObjectListDefinitions,
+	HideHelpCommand: true,
+}
+
+var objectRestore = cli.Command{
+	Name:    "restore",
+	Usage:   "Restores a trashed custom object record, bringing it back to active.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "entity-slug",
+			Usage:     "The slug of the custom object type.",
+			Required:  true,
+			PathParam: "entitySlug",
+		},
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     "The ID of the record to restore.",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "body",
+			BodyRoot: true,
+		},
+	},
+	Action:          handleObjectRestore,
 	HideHelpCommand: true,
 }
 
@@ -590,6 +616,57 @@ func handleObjectListDefinitions(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "object list-definitions",
+		Transform:      transform,
+	})
+}
+
+func handleObjectRestore(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomlightfldlightfieldgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomlightfldlightfieldgo.ObjectRestoreParams{
+		EntitySlug: cmd.Value("entity-slug").(string),
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Object.Restore(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "object restore",
 		Transform:      transform,
 	})
 }

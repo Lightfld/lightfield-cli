@@ -32,7 +32,7 @@ var memberRetrieve = cli.Command{
 
 var memberList = cli.Command{
 	Name:    "list",
-	Usage:   "Returns a paginated list of members in your workspace. Use `offset` and `limit`\nto paginate through results. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
+	Usage:   "Returns a paginated list of members in your workspace. Results are sorted by\nwhen the record was created in Lightfield (`createdAt`), newest first. Use\n`offset` and `limit` to paginate through results. See\n<u>[List endpoints](/using-the-api/list-endpoints/)</u> for more information\nabout pagination.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{

@@ -32,6 +32,42 @@ func TestEmailList(t *testing.T) {
 	})
 }
 
+func TestEmailDelete(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"email", "delete",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(emailDelete)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"email", "delete",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"email", "delete",
+			"--id", "id",
+		)
+	})
+}
+
 func TestEmailDraft(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
@@ -88,6 +124,106 @@ func TestEmailDraft(t *testing.T) {
 			t, pipeData,
 			"--api-key", "string",
 			"email", "draft",
+		)
+	})
+}
+
+func TestEmailLog(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"email", "log",
+			"--fields", "{$from: $from, $sentAt: $sentAt, $bcc: [string], $body: {html: html, text: text}, $cc: [string], $privacySetting: FULL, $subject: $subject, $threadId: x, $to: [string]}",
+			"--auto-create-records=true",
+			"--headers", "{foo: string}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(emailLog)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"email", "log",
+			"--fields.from", "$from",
+			"--fields.sent-at", "$sentAt",
+			"--fields.bcc", "[string]",
+			"--fields.body", "{html: html, text: text}",
+			"--fields.cc", "[string]",
+			"--fields.privacy-setting", "FULL",
+			"--fields.subject", "$subject",
+			"--fields.thread-id", "x",
+			"--fields.to", "[string]",
+			"--auto-create-records=true",
+			"--headers", "{foo: string}",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("" +
+			"fields:\n" +
+			"  $from: $from\n" +
+			"  $sentAt: $sentAt\n" +
+			"  $bcc:\n" +
+			"    - string\n" +
+			"  $body:\n" +
+			"    html: html\n" +
+			"    text: text\n" +
+			"  $cc:\n" +
+			"    - string\n" +
+			"  $privacySetting: FULL\n" +
+			"  $subject: $subject\n" +
+			"  $threadId: x\n" +
+			"  $to:\n" +
+			"    - string\n" +
+			"autoCreateRecords: true\n" +
+			"headers:\n" +
+			"  foo: string\n")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"email", "log",
+		)
+	})
+}
+
+func TestEmailRestore(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"email", "restore",
+			"--id", "id",
+			"--body", "{}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(emailRestore)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"email", "restore",
+			"--id", "id",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("{}")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"email", "restore",
+			"--id", "id",
 		)
 	})
 }

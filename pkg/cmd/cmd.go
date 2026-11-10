@@ -103,6 +103,7 @@ func init() {
 					&accountDelete,
 					&accountDefinitions,
 					&accountFieldHistory,
+					&accountRestore,
 				},
 			},
 			{
@@ -117,6 +118,7 @@ func init() {
 					&contactDelete,
 					&contactDefinitions,
 					&contactFieldHistory,
+					&contactRestore,
 				},
 			},
 			{
@@ -144,7 +146,12 @@ func init() {
 					&meetingUpdate,
 					&meetingList,
 					&meetingDelete,
+					&meetingCreateRecording,
 					&meetingDefinitions,
+					&meetingListRecordings,
+					&meetingRestore,
+					&meetingRetrieveRecording,
+					&meetingUpdateRecording,
 				},
 			},
 			{
@@ -158,6 +165,7 @@ func init() {
 					&noteList,
 					&noteDelete,
 					&noteDefinitions,
+					&noteRestore,
 				},
 			},
 			{
@@ -172,6 +180,7 @@ func init() {
 					&opportunityDelete,
 					&opportunityDefinitions,
 					&opportunityFieldHistory,
+					&opportunityRestore,
 				},
 			},
 			{
@@ -185,6 +194,7 @@ func init() {
 					&taskList,
 					&taskDelete,
 					&taskDefinitions,
+					&taskRestore,
 				},
 			},
 			{
@@ -230,6 +240,7 @@ func init() {
 					&objectDefinitions,
 					&objectFieldHistory,
 					&objectListDefinitions,
+					&objectRestore,
 				},
 			},
 			{
@@ -239,7 +250,10 @@ func init() {
 				Commands: []*cli.Command{
 					&emailRetrieve,
 					&emailList,
+					&emailDelete,
 					&emailDraft,
+					&emailLog,
+					&emailRestore,
 					&emailSend,
 				},
 			},
@@ -270,7 +284,53 @@ func init() {
 				Suggest:  true,
 				Commands: []*cli.Command{
 					&channelRetrieve,
+					&channelUpdate,
 					&channelList,
+				},
+			},
+			{
+				Name:     "enrichment-run",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&enrichmentRunEnrich,
+					&enrichmentRunGetEnrichmentRun,
+				},
+			},
+			{
+				Name:     "sequence",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&sequenceCreate,
+					&sequenceRetrieve,
+					&sequenceList,
+					&sequenceActivate,
+					&sequenceDeactivate,
+					&sequenceDiscardDraft,
+					&sequenceListEnrollments,
+					&sequenceListMessages,
+					&sequenceListTemplateVariables,
+					&sequencePublishDraft,
+					&sequenceRetrieveDraft,
+					&sequenceRetrieveEnrollment,
+					&sequenceRetrieveMessage,
+					&sequenceRetrievePerformance,
+					&sequenceRetrieveTest,
+					&sequenceStartTest,
+					&sequenceUpdateDraft,
+					&sequenceUpdateEnrollments,
+				},
+			},
+			{
+				Name:     "sender",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&senderRetrieve,
+					&senderUpdate,
+					&senderList,
+					&senderMarkHealthy,
 				},
 			},
 			{
