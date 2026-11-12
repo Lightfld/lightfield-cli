@@ -468,6 +468,12 @@ func flagOptions(
 		}
 	}
 
+	if filterOptions, err := listFilterOptions(cmd); err != nil {
+		return nil, err
+	} else {
+		options = append(options, filterOptions...)
+	}
+
 	// Add header parameters
 	headerSettings := apiquery.QuerySettings{
 		NestedFormat: apiquery.NestedQueryFormatDots,
