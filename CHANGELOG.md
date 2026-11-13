@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0](https://github.com/Lightfld/lightfield-cli/compare/v0.8.0...v0.9.0) (2026-11-13)
+
+
+### Features
+
+* **cli:** add --filter to list commands ([1118bf2](https://github.com/Lightfld/lightfield-cli/commit/1118bf247bb9cdf3ff47aa90ae14c300a514b952))
+* **cli:** add --filter to list commands ([57d4cde](https://github.com/Lightfld/lightfield-cli/commit/57d4cdeb0e3506262ee2514f0348f48fedd457c8))
+
 ## [0.8.0](https://github.com/Lightfld/lightfield-cli/compare/v0.7.0...v0.8.0) (2026-11-10)
 
 
