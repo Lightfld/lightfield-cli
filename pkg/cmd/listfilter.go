@@ -11,8 +11,7 @@ import (
 const filterFlagName = "filter"
 
 // filterValues keeps each --filter occurrence whole. A cli.StringSliceFlag
-// would split on commas, which list-valued filters such as `$industry[in]=a,b`
-// need to keep.
+// would split on commas, breaking values such as `$name[equal]=Acme, Inc.`.
 type filterValues []string
 
 func (f *filterValues) Set(s string) error {

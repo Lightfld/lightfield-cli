@@ -31,7 +31,7 @@ func TestListFilterSendsEachFilterAsQueryParam(t *testing.T) {
 		"opportunity", "list",
 		"--limit", "25",
 		"--filter", "$stage[equal]=Qualified",
-		"--filter", "$industry[in]=opt_a,opt_b",
+		"--filter", "$name[equal]=Acme, Inc.",
 		"--filter", "$updatedAt[greaterThanOrEqual]=2026-11-11T00:00:00Z",
 	)
 	require.NoError(t, err)
@@ -41,7 +41,7 @@ func TestListFilterSendsEachFilterAsQueryParam(t *testing.T) {
 	assert.Equal(t, url.Values{
 		"limit":                          {"25"},
 		"$stage[equal]":                  {"Qualified"},
-		"$industry[in]":                  {"opt_a,opt_b"},
+		"$name[equal]":                   {"Acme, Inc."},
 		"$updatedAt[greaterThanOrEqual]": {"2026-11-11T00:00:00Z"},
 	}, req.URL.Query())
 }
